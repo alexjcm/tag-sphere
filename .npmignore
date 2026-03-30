@@ -1,0 +1,17 @@
+# Compiled output
+dist/
+*.js.gz
+
+# Dependencies
+node_modules/
+
+# Dev configs — excluded from npm bundle
+src/
+tests/
+demo/
+tsup.config.ts
+tsconfig.json
+vitest.config.ts
+sphere-tags-plan.md
+.DS_Store
+*.map

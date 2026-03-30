@@ -1,0 +1,86 @@
+{
+  "name": "tag-sphere",
+  "version": "0.1.0",
+  "description": "Lightweight 3D rotating tag sphere. No dependencies. Works with Vanilla JS, React and Astro.",
+  "type": "module",
+  "keywords": [
+    "tag-cloud",
+    "sphere",
+    "3d",
+    "tags",
+    "animation",
+    "astro",
+    "react",
+    "vanilla-js",
+    "typescript"
+  ],
+  "author": "alexjcm",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alexjcm/tag-sphere"
+  },
+  "homepage": "https://alexjcm.github.io/tag-sphere",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "astro",
+    "styles"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "require": "./dist/react/index.cjs"
+    },
+    "./astro": "./astro/TagSphere.astro",
+    "./styles": "./styles/tag-sphere.css"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "demo": "npx serve . --listen 3131 --no-clipboard",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jsdom": "^28.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.1.2",
+    "jsdom": "^29.0.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
+  }
+}
