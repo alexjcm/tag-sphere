@@ -1,0 +1,96 @@
+---
+/**
+ * TagSphere — Astro component
+ *
+ * Usage:
+ *   import TagSphere from 'tag-sphere/astro';
+ *   <TagSphere tags={['Astro', 'TypeScript']} radius={120} />
+ *
+ * The container needs `position: relative` — applied inline by default.
+ * Override size with `class` or `style`.
+ */
+
+interface Props {
+  tags:       string[];
+  radius?:    number;
+  speed?:     number;
+  direction?: number;
+  tagClass?:  string;
+  id?:        string;
+  class?:     string;
+  style?:     string;
+  [key: string]: unknown;
+}
+
+const {
+  tags,
+  radius    = 120,
+  speed     = 0.03,
+  direction = 135,
+  tagClass,
+  id,
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+
+// Each instance needs a stable, unique ID so the client script can find it
+const containerId = id ?? `ts-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<!--
+  Pre-rendered spans: visible to crawlers before JS runs (SEO-friendly).
+  The client script replaces them with animated versions.
+-->
+<div
+  id={containerId}
+  class={className}
+  style={`position:relative${style ? `;${style}` : ''}`}
+  data-tag-sphere
+  data-tags={JSON.stringify(tags)}
+  data-radius={String(radius)}
+  data-speed={String(speed)}
+  data-direction={String(direction)}
+  data-tag-class={tagClass ?? ''}
+  {...rest}
+>
+  {tags.map((tag: string) => (
+    <span class={tagClass ? `ts-tag ${tagClass}` : 'ts-tag'}>{tag}</span>
+  ))}
+</div>
+
+<script>
+  /**
+   * Astro hoists and deduplicates this <script> automatically.
+   * It runs once per page, initialising all [data-tag-sphere] containers.
+   */
+  import { tagSphere } from 'tag-sphere';
+
+  function initContainer(el: HTMLElement): void {
+    const d = el.dataset;
+    const tags: string[] = JSON.parse(d.tags ?? '[]');
+
+    // Clear pre-rendered static spans before creating animated ones
+    el.innerHTML = '';
+
+    tagSphere(el, {
+      tags,
+      radius:    d.radius    ? Number(d.radius)    : 120,
+      speed:     d.speed     ? Number(d.speed)     : 0.03,
+      direction: d.direction ? Number(d.direction) : 135,
+      tagClass:  d.tagClass  || undefined,
+    });
+  }
+
+  // Run on initial load
+  document
+    .querySelectorAll<HTMLElement>('[data-tag-sphere]')
+    .forEach(initContainer);
+
+  // Support Astro View Transitions (re-run after page swap)
+  document.addEventListener('astro:page-load', () => {
+    document
+      .querySelectorAll<HTMLElement>('[data-tag-sphere]')
+      .forEach(initContainer);
+  });
+</script>
