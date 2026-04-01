@@ -21,6 +21,20 @@
     "url": "https://github.com/alexjcm/tag-sphere"
   },
   "homepage": "https://alexjcm.github.io/tag-sphere",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jsdom": "^28.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.1.2",
+    "jsdom": "^29.0.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
+  },
   "engines": {
     "node": ">=20"
   },
@@ -68,19 +82,5 @@
     "react-dom": {
       "optional": true
     }
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@types/jsdom": "^28.0.1",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitest/coverage-v8": "^4.1.2",
-    "jsdom": "^29.0.1",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "tsup": "^8.5.1",
-    "typescript": "^6.0.2",
-    "vitest": "^4.1.2"
   }
 }
