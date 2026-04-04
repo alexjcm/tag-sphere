@@ -109,6 +109,11 @@ Depth controls `opacity`, `font-size`, and `z-index` to create perspective.
 
 ## Development 🛠️
 
+Node compatibility:
+
+- Library (`tag-sphere` core + React entry): `Node >=20`
+- Examples/Showcase (includes Astro demo): `Node >=24`
+
 ```bash
 npm install
 npm run build

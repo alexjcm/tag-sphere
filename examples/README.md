@@ -23,6 +23,8 @@ npm run examples:install
 npm run examples:dev
 ```
 
+Node requirement: `Node >=24` (Astro 6 in this workspace requires it).
+
 Open the URL printed in the terminal (usually `http://localhost:3000`).
 Default ports:
 
@@ -50,6 +52,8 @@ From the repository root:
 ```bash
 npm run examples:build
 ```
+
+Node requirement for this build: `Node >=24`.
 
 This generates:
 
