@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { tagSphere } from '../src/index';
+import { TagSphereConstraints } from '../src/constraints';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -99,6 +100,20 @@ describe('tagSphere()', () => {
 
     inst.destroy();
   });
+
+  // ── Runtime constraints ────────────────────────────────────────────────────
+
+  it('throws when tags is empty', () => {
+    expect(() => tagSphere(container, { tags: [] })).toThrow();
+  });
+
+  it('truncates tags beyond the max limit', () => {
+    const tags = Array.from({ length: 70 }, (_, i) => `Tag-${i}`);
+    const inst = tagSphere(container, { tags });
+    expect(container.querySelectorAll('.ts-tag')).toHaveLength(TagSphereConstraints.MAX_TAGS);
+    inst.destroy();
+  });
+
 
   // ── destroy() ──────────────────────────────────────────────────────────────
 

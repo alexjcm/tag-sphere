@@ -2,16 +2,28 @@
  * Options passed to {@link tagSphere}.
  */
 export interface TagSphereOptions {
-  /** List of tag labels to render on the sphere. */
+  /**
+   * List of tag labels to render on the sphere.
+   * Runtime limits: min 1, max 50 (values above 50 are truncated).
+   */
   tags: string[];
-  /** Sphere radius in pixels. @default 120 */
+  /**
+   * Sphere radius in pixels.
+   * Runtime clamped to [60, 200].
+   * @default 120
+   */
   radius?: number;
-  /** Idle rotation speed (radians-per-frame scale). @default 0.03 */
+  /**
+   * Idle rotation speed (radians-per-frame scale).
+   * Runtime rules: absolute value, 3 decimals, clamped to [0.001, 0.08].
+   * @default 0.01
+   */
   speed?: number;
   /**
    * Idle rotation direction in clockwise degrees.
-   * 0 = right, 90 = down, 135 = diagonal bottom-right.
-   * @default 135
+   * Normalized at runtime to [0, 359].
+   * 0 = right, 90 = down, 180 = left, 270 = up.
+   * @default 20
    */
   direction?: number;
   /** Extra CSS class added to every tag `<span>`. */

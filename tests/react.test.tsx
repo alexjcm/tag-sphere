@@ -61,17 +61,27 @@ describe('<TagSphere />', () => {
     ).not.toThrow();
   });
 
-  it('re-render does not produce duplicate span sets (no double initialisation)', () => {
+  it('re-render updates the rendered tags when options change', () => {
     const { container, rerender } = render(
       <TagSphere tags={['A', 'B']} style={defaultStyle} />
     );
 
-    const countBefore = container.querySelectorAll('.ts-tag').length;
+    expect(container.querySelectorAll('.ts-tag')).toHaveLength(2);
 
     rerender(<TagSphere tags={['A', 'B', 'C']} style={defaultStyle} />);
 
-    // useEffect with [] deps → no re-init on re-render → span count unchanged
-    expect(container.querySelectorAll('.ts-tag').length).toBe(countBefore);
+    expect(container.querySelectorAll('.ts-tag')).toHaveLength(3);
+  });
+
+  it('re-render with equivalent tags values does not duplicate spans', () => {
+    const { container, rerender } = render(
+      <TagSphere tags={['A', 'B']} style={defaultStyle} />
+    );
+    expect(container.querySelectorAll('.ts-tag')).toHaveLength(2);
+
+    rerender(<TagSphere tags={['A', 'B']} style={defaultStyle} />);
+
+    expect(container.querySelectorAll('.ts-tag')).toHaveLength(2);
   });
 
   // ── Props forwarding ───────────────────────────────────────────────────────

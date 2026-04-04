@@ -33,6 +33,7 @@
     "react-dom": "^19.2.4",
     "tsup": "^8.5.1",
     "typescript": "^6.0.2",
+    "vite": "^7.1.9",
     "vitest": "^4.1.2"
   },
   "engines": {
@@ -68,7 +69,14 @@
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "demo": "npx serve . --listen 3131 --no-clipboard",
+    "demo": "vite",
+    "demo:1": "vite --open /demo/",
+    "demo:2": "vite --open /demo2/",
+    "examples:install": "npm --prefix examples/vanilla install && npm --prefix examples/react install && npm --prefix examples/astro install",
+    "examples:dev:vanilla": "npm --prefix examples/vanilla run dev",
+    "examples:dev:react": "npm --prefix examples/react run dev",
+    "examples:dev:astro": "npm --prefix examples/astro run dev",
+    "examples:build": "npm run build && npm --prefix examples/vanilla run build && npm --prefix examples/react run build && npm --prefix examples/astro run build && node scripts/build-showcase.mjs",
     "prepublishOnly": "npm run build && npm test"
   },
   "peerDependencies": {

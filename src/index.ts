@@ -1,4 +1,11 @@
 import type { TagSphereOptions, TagSphereInstance, Point } from './types';
+import {
+  TagSphereConstraints,
+  clamp,
+  isFiniteNumber,
+  normalizeDirection,
+  normalizeSpeed,
+} from './constraints';
 
 // ─── Depth constants (hardcoded) ──────────────────────────────────────────────
 // 🔮 Future: expose as TagSphereOptions (minOpacity, minScale, maxScale)
@@ -75,21 +82,37 @@ export function tagSphere(
   el: HTMLElement,
   options: TagSphereOptions,
 ): TagSphereInstance {
-  const {
-    tags,
-    radius    = 120,
-    speed     = 0.03,
-    direction = 135,
-    tagClass,
-  } = options;
+  // Validate and normalize runtime options up-front so the render loop can stay
+  // branch-light and deterministic on every frame.
+  if (options.tags.length < TagSphereConstraints.MIN_TAGS) {
+    throw new Error(
+      `tagSphere: "tags" must contain at least ${TagSphereConstraints.MIN_TAGS} item.`,
+    );
+  }
+
+  const tags = options.tags.slice(0, TagSphereConstraints.MAX_TAGS);
+  const radius = isFiniteNumber(options.radius)
+    ? clamp(options.radius, TagSphereConstraints.MIN_RADIUS, TagSphereConstraints.MAX_RADIUS)
+    : TagSphereConstraints.DEFAULT_RADIUS;
+
+  const speed = isFiniteNumber(options.speed)
+    ? normalizeSpeed(options.speed)
+    : TagSphereConstraints.DEFAULT_SPEED;
+
+  const direction = isFiniteNumber(options.direction)
+    ? normalizeDirection(options.direction)
+    : TagSphereConstraints.DEFAULT_DIRECTION;
+
+  const { tagClass } = options;
 
   const spans  = createSpans(el, tags, tagClass);
   let   points = fibonacci(tags.length);
 
-  // Decompose idle direction (degrees → radians) into X/Y rotation per frame
+  // Decompose idle direction (degrees → radians) into X/Y rotation per frame.
+  // These are mutable so pointer interaction can update idle direction on leave.
   const rad    = (direction * Math.PI) / 180;
-  const idleAY =  Math.cos(rad) * speed; // around Y axis
-  const idleAX =  Math.sin(rad) * speed; // around X axis
+  let idleAY =  Math.cos(rad) * speed; // around Y axis
+  let idleAX =  Math.sin(rad) * speed; // around X axis
 
   // Pointer state — updated by event handlers, consumed by RAF
   let pointerDx = 0;
@@ -107,9 +130,9 @@ export function tagSphere(
     let angleY: number;
 
     if (isHovered) {
-      // Speed proportional to cursor distance from center, capped at speed * 4
+      // Speed proportional to cursor distance from center, capped for smoothness.
       const dist   = Math.sqrt(pointerDx * pointerDx + pointerDy * pointerDy);
-      const factor = Math.min(dist, 1) * speed * 4;
+      const factor = Math.min(dist, 1) * speed * TagSphereConstraints.HOVER_SPEED_MULTIPLIER;
       angleX = -pointerDy * factor;
       angleY =  pointerDx * factor;
     } else {
@@ -141,9 +164,9 @@ export function tagSphere(
 
   function onMouseMove(e: MouseEvent): void {
     const r  = el.getBoundingClientRect();
-    // Normalize by radius diameter so distance=1 means cursor is at sphere edge
-    pointerDx = (e.clientX - r.left - r.width  / 2) / (radius * 2);
-    pointerDy = (e.clientY - r.top  - r.height / 2) / (radius * 2);
+    // Normalize by sphere radius so distance=1 means cursor is at sphere edge.
+    pointerDx = (e.clientX - r.left - r.width  / 2) / radius;
+    pointerDy = (e.clientY - r.top  - r.height / 2) / radius;
   }
 
   function onMouseEnter(): void {
@@ -151,17 +174,25 @@ export function tagSphere(
   }
 
   function onMouseLeave(): void {
+    const dist = Math.sqrt(pointerDx * pointerDx + pointerDy * pointerDy);
+    if (dist > 0) {
+      // Keep the last pointer direction as the new idle direction
+      // while preserving the configured base speed.
+      const nx = pointerDx / dist;
+      const ny = pointerDy / dist;
+      idleAX = -ny * speed;
+      idleAY =  nx * speed;
+    }
     isHovered = false;
-    pointerDx = 0;
-    pointerDy = 0;
   }
 
   function onTouchMove(e: TouchEvent): void {
     const touch = e.touches[0];
     if (!touch) return;
     const r   = el.getBoundingClientRect();
-    pointerDx = (touch.clientX - r.left - r.width  / 2) / (radius * 2);
-    pointerDy = (touch.clientY - r.top  - r.height / 2) / (radius * 2);
+    // Keep touch coordinates in the same normalized space as mouse movement.
+    pointerDx = (touch.clientX - r.left - r.width  / 2) / radius;
+    pointerDy = (touch.clientY - r.top  - r.height / 2) / radius;
   }
 
   function onTouchEnd(): void {

@@ -66,31 +66,53 @@ const containerId = id ?? `ts-${Math.random().toString(36).slice(2, 9)}`;
    */
   import { tagSphere } from 'tag-sphere';
 
+  type TagSphereInstance = { destroy: () => void };
+  // Track one live instance per container to avoid stacked RAF loops/listeners
+  // when Astro re-runs scripts after view transitions.
+  const instances = new Map<HTMLElement, TagSphereInstance>();
+
+  function cleanupDetached(): void {
+    for (const [el, instance] of instances) {
+      if (!el.isConnected) {
+        instance.destroy();
+        instances.delete(el);
+      }
+    }
+  }
+
   function initContainer(el: HTMLElement): void {
+    const prev = instances.get(el);
+    if (prev) prev.destroy();
+
     const d = el.dataset;
     const tags: string[] = JSON.parse(d.tags ?? '[]');
 
     // Clear pre-rendered static spans before creating animated ones
     el.innerHTML = '';
 
-    tagSphere(el, {
+    const instance = tagSphere(el, {
       tags,
       radius:    d.radius    ? Number(d.radius)    : 120,
       speed:     d.speed     ? Number(d.speed)     : 0.03,
       direction: d.direction ? Number(d.direction) : 135,
       tagClass:  d.tagClass  || undefined,
     });
+
+    instances.set(el, instance);
   }
 
-  // Run on initial load
-  document
-    .querySelectorAll<HTMLElement>('[data-tag-sphere]')
-    .forEach(initContainer);
-
-  // Support Astro View Transitions (re-run after page swap)
-  document.addEventListener('astro:page-load', () => {
+  function initAll(): void {
+    cleanupDetached();
     document
       .querySelectorAll<HTMLElement>('[data-tag-sphere]')
       .forEach(initContainer);
+  }
+
+  // Run on initial load
+  initAll();
+
+  // Support Astro View Transitions (re-run after page swap)
+  document.addEventListener('astro:page-load', () => {
+    initAll();
   });
 </script>

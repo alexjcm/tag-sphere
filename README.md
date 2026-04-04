@@ -1,29 +1,25 @@
-# tag-sphere 🪐
+# tag-sphere
 
-A lightweight, dependency-free 3D rotating tag sphere. Built with performance and DX (Developer Experience) in mind.
+A lightweight, dependency-free 3D rotating tag sphere for Vanilla JS, React, and Astro.
 
 [![npm version](https://img.shields.io/npm/v/tag-sphere?color=7c6aff&style=flat-square)](https://www.npmjs.com/package/tag-sphere)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/tag-sphere?color=00d4ff&label=min%2Bgzip&style=flat-square)](https://bundlephobia.com/package/tag-sphere)
 [![license](https://img.shields.io/npm/l/tag-sphere?color=6b6b8a&style=flat-square)](./LICENSE)
 
----
-
 ## Features ✨
 
-- **📦 Ultra Lightweight**: Under 1KB (min+gzip) for the core.
-- **🚀 Zero Dependencies**: No runtime bloat.
-- **🌗 Fully Themeable**: Powered by CSS custom properties.
-- **🧩 Framework-Ready**: Native wrappers for **React (18+)** and **Astro**.
-- **🔍 SEO Friendly**: Pre-renders tags as static HTML in Astro/React.
-- **📱 Touch Support**: Supports mouse and touch interactions.
+Status legend: `✅ implemented` · `⚠️ partial/pending`
 
----
+- ⚠️ **📦 Ultra Lightweight**: Core target is `< 1 KB` (min+gzip). Current core gzip size is `1016 B`.
+- ✅ **🚀 Zero Dependencies**: No runtime dependencies.
+- ✅ **🌗 Fully Themeable**: CSS custom properties and optional `tag-sphere/styles`.
+- ✅ **🧩 Framework-Ready**: Vanilla API + official React (18+) and Astro entrypoints.
+- ⚠️ **🔍 SEO Friendly**: Astro pre-renders static tags. React wrapper renders tags client-side (not static pre-render by default).
+- ✅ **📱 Touch Support**: Touch interaction implemented (`touchmove`/`touchend`, passive move listener).
 
 ## Demo 🎮
 
-Check out the demo: [**alexjcm.github.io/tag-sphere**](https://alexjcm.github.io/tag-sphere)
-
----
+[alexjcm.github.io/tag-sphere](https://alexjcm.github.io/tag-sphere)
 
 ## Installation 💿
 
@@ -31,48 +27,48 @@ Check out the demo: [**alexjcm.github.io/tag-sphere**](https://alexjcm.github.io
 npm install tag-sphere
 ```
 
----
-
 ## Quick Start 🚀
 
-### 🍦 Vanilla JS
+### Vanilla JS
 
-```typescript
+```ts
 import { tagSphere } from 'tag-sphere';
-import 'tag-sphere/styles'; // Optional base styles
+import 'tag-sphere/styles'; // optional
 
-const container = document.getElementById('my-sphere');
-const options = {
-  tags: ['Astro', 'React', 'TypeScript', 'Vite', 'HTML', 'CSS'],
+const el = document.getElementById('my-sphere');
+if (!el) throw new Error('Missing #my-sphere container');
+
+const instance = tagSphere(el, {
+  tags: ['Astro', 'TypeScript', 'React'],
   radius: 120,
-  speed: 0.03
-};
+  speed: 0.03,
+  direction: 135,
+});
 
-const instance = tagSphere(container, options);
-
-// To clean up:
+// Later:
 // instance.destroy();
 ```
 
-### ⚛️ React (18+)
+### React (18+)
 
 ```tsx
 import { TagSphere } from 'tag-sphere/react';
 import 'tag-sphere/styles';
 
-function MyComponent() {
+export function Example() {
   return (
-    <TagSphere 
+    <TagSphere
       tags={['Astro', 'TypeScript', 'React']}
       radius={120}
       speed={0.03}
-      style={{ width: '300px', height: '300px' }}
+      direction={135}
+      style={{ width: 320, height: 320, position: 'relative' }}
     />
   );
 }
 ```
 
-### 🚀 Astro
+### Astro
 
 ```astro
 ---
@@ -80,65 +76,108 @@ import TagSphere from 'tag-sphere/astro';
 import 'tag-sphere/styles';
 ---
 
-<TagSphere 
-  tags={['Astro', 'TypeScript', 'Vite']} 
-  radius={150} 
-  client:visible 
+<TagSphere
+  tags={['Astro', 'TypeScript', 'Vite']}
+  radius={150}
+  speed={0.03}
+  direction={135}
+  client:visible
 />
 ```
 
----
-
 ## API Reference 📖
+
+### `tagSphere(container, options)`
+
+- `container`: `HTMLElement` (required).
+- Returns: `{ destroy(): void }`.
+
+`container` must have `position: relative` and a fixed size (`width`/`height`).
 
 ### Options
 
 | Property | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `tags` | `string[]` | **Required** | Array of strings to render. |
-| `radius` | `number` | `120` | Radius of the sphere in pixels. |
-| `speed` | `number` | `0.03` | Idle rotation speed (radians per frame). |
-| `direction` | `number` | `135` | Idle rotation direction in degrees (0-360). |
-| `tagClass` | `string` | `undefined` | Additional CSS class for each tag span. |
+|---|---|---|---|
+| `tags` | `string[]` | required | Labels to render. Min `1`, max `50` (extra tags are truncated). |
+| `radius` | `number` | `120` | Sphere radius in pixels. Clamped to `[60, 200]`. |
+| `speed` | `number` | `0.03` | Idle angular speed. Normalized to absolute value, rounded to 3 decimals, clamped to `[0.005, 0.08]`. |
+| `direction` | `number` | `135` | Idle direction in clockwise degrees, normalized to `[0, 359]`. |
+| `tagClass` | `string` | `undefined` | Extra class added to each `.ts-tag`. |
 
-### Instance Methods (Vanilla)
+Runtime validation behavior:
 
-The `tagSphere()` function returns an object with:
-- `destroy()`: Stops the animation loop and removes all spans from the container.
+- `tags.length < 1` throws an error.
+- Non-finite numeric values (`NaN`, `Infinity`) fall back to defaults.
 
----
+### Instance method
 
-## Customization (CSS Variables) 🎨
+- `destroy()`: cancels animation, removes listeners, and removes created spans.
+- Safe to call multiple times.
 
-The library uses CSS variables for effortless theming. Apply these to your container:
+## Styling (`tag-sphere/styles`) 🎨
+
+Importing `tag-sphere/styles` is optional. The library works without it.
 
 ```css
 #my-sphere {
-  --ts-bg: transparent;       /* Tag background */
-  --ts-color: #7c6aff;      /* Tag text color */
-  --ts-border: none;         /* Tag border */
-  --ts-radius: 4px;          /* Tag border-radius */
-  --ts-padding: 4px 8px;     /* Tag padding */
-  --ts-font-size: 0.8rem;    /* Tag font size */
-  --ts-blur: none;           /* Glassmorphism blur (e.g. blur(4px)) */
-  --ts-transition: opacity 0.3s; /* Transition for fade effects */
+  --ts-bg: rgba(128, 128, 128, 0.08);
+  --ts-color: inherit;
+  --ts-border: 1px solid rgba(128, 128, 128, 0.2);
+  --ts-radius: 20px;
+  --ts-padding: 3px 10px;
+  --ts-font-size: 0.8rem;
+  --ts-font-weight: 500;
+  --ts-blur: none;
+  --ts-transition: opacity 0.15s;
 }
 ```
 
----
+## How It Works ⚙️
+
+### 1) Spherical distribution (Fibonacci spherical lattice)
+
+Each tag is placed using a Fibonacci-based spherical distribution to avoid pole clustering.
+This gives a visually uniform distribution in `O(N)`.
+
+### 2) Rotation + depth cue
+
+On every `requestAnimationFrame`, points rotate and depth is derived from `z`:
+
+Depth controls `opacity`, `font-size`, and `z-index` to create perspective.
 
 ## Development 🛠️
 
 ```bash
 npm install
-
 npm run build
-
-# Launch demo locally (http://localhost:3131)
+npm test
 npm run demo
 ```
 
----
+### Fast local demo loop (instant updates)
+
+Use Vite for local iteration. It serves both demos and hot-reloads when you edit files in `src/`.
+
+```bash
+npm run demo:dev
+```
+
+Then open:
+
+- `http://localhost:5173/demo/`
+- `http://localhost:5173/demo2/`
+
+Quick open helpers:
+
+```bash
+npm run demo:dev:1
+npm run demo:dev:2
+```
+
+Notes:
+
+- `npm run demo` stays as a plain static server (matches GitHub Pages behavior).
+- In Vite dev mode, demo imports are aliased to `src/index.ts` so library changes appear immediately.
 
 ## License 📜
 

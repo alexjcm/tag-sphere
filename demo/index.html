@@ -6,20 +6,13 @@
   <title>tag-sphere — 3D Rotating Tag Cloud</title>
   <meta name="description" content="Lightweight 3D rotating tag sphere. No dependencies. Works with Vanilla JS, React and Astro." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles/tag-sphere.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- ── Header ─────────────────────────────────────────────────────────── -->
 <header>
-  <div class="badge-row">
-    <span class="badge badge-accent">v0.1.0</span>
-    <span class="badge">&lt; 1 KB min+gzip</span>
-    <span class="badge">Zero dependencies</span>
-    <span class="badge">MIT</span>
-  </div>
-
   <h1>tag-sphere</h1>
 
   <p class="tagline">
@@ -28,75 +21,60 @@
   </p>
 
   <div class="cta-row">
-    <a class="btn btn-primary" href="https://www.npmjs.com/package/tag-sphere" target="_blank">
-      npm install tag-sphere
-    </a>
-    <a class="btn btn-ghost" href="https://github.com/alexjcm/tag-sphere" target="_blank">
+    <button
+      id="copy-install-btn"
+      class="btn btn-primary"
+      type="button"
+      aria-label="Copy npm install command"
+      title="Copy npm install command"
+    >
+      npm i tag-sphere
+      <svg class="btn-copy-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1Zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 16H10V7h9v14Z"/>
+      </svg>
+    </button>
+    <a class="btn btn-ghost" href="https://github.com/alexjcm/tag-sphere" target="_blank" rel="noopener noreferrer">
       GitHub →
     </a>
   </div>
 </header>
 
-<!-- ── Themes demo ─────────────────────────────────────────────────────── -->
+<!-- Themes demo -->
 <section class="section">
   <p class="section-label">Live Demo</p>
-  <h2 class="section-title">Three theming variants</h2>
-  <p class="section-desc">All driven by CSS custom properties — no configuration needed.</p>
 
   <div class="cards-grid">
-
-    <!-- Dark -->
-    <article class="demo-card card-dark">
+    <article class="demo-card card-default">
       <div class="card-preview">
-        <div id="sphere-dark" class="sphere-container" style="--ts-bg:rgba(255,255,255,0.05);--ts-color:#c8c8e8;--ts-border:1px solid rgba(255,255,255,0.1)"></div>
+        <div id="sphere-default" class="sphere-container"></div>
       </div>
       <div class="card-footer">
-        <div class="card-name">Dark</div>
-        <div class="card-desc">#tc { --ts-bg: rgba(255,255,255,0.05); --ts-color: #c8c8e8; }</div>
+        <div class="card-name">Unstyled</div>
       </div>
     </article>
 
-    <!-- Light -->
-    <article class="demo-card card-light">
-      <div class="card-preview">
-        <div id="sphere-light" class="sphere-container" style="--ts-bg:#fff;--ts-color:#1e293b;--ts-border:1px solid #cbd5e1;--ts-radius:8px"></div>
-      </div>
-      <div class="card-footer" style="background:#e8edf4;border-color:#d1d9e0">
-        <div class="card-name" style="color:#1e293b">Light</div>
-        <div class="card-desc" style="color:#64748b">#tc { --ts-bg: #fff; --ts-color: #1e293b; }</div>
-      </div>
-    </article>
-
-    <!-- Glassmorphism -->
     <article class="demo-card card-glass">
-      <div class="card-preview" style="background:linear-gradient(135deg,#1a0533,#0a1a40,#001832)">
+      <div class="card-preview">
         <div class="glass-orb glass-orb-1"></div>
         <div class="glass-orb glass-orb-2"></div>
-        <div id="sphere-glass" class="sphere-container" style="--ts-bg:rgba(255,255,255,0.06);--ts-color:#fff;--ts-border:1px solid rgba(255,255,255,0.15);--ts-blur:blur(8px);--ts-radius:16px;position:relative;z-index:1"></div>
+        <div
+          id="sphere-glass"
+          class="sphere-container"
+          style="--ts-bg:rgba(255,255,255,0.08);--ts-color:#f3f7ff;--ts-border:1px solid rgba(255,255,255,0.25);--ts-blur:blur(8px);--ts-radius:16px;position:relative;z-index:1"
+        ></div>
       </div>
       <div class="card-footer">
         <div class="card-name">Glassmorphism</div>
-        <div class="card-desc">#tc { --ts-blur: blur(8px); --ts-bg: rgba(255,255,255,0.06); }</div>
       </div>
     </article>
-
   </div>
 </section>
 
-<!-- ── Live controls ───────────────────────────────────────────────────── -->
+<!-- Live controls -->
 <section class="section">
-  <p class="section-label">Playground</p>
-  <h2 class="section-title">Live controls</h2>
-  <p class="section-desc">Adjust any parameter in real time. Uses the <code style="color:var(--accent-2);font-family:'JetBrains Mono',monospace;font-size:14px">destroy() + reinitialize</code> pattern.</p>
-
   <div class="controls-card">
     <div class="controls-header">
-      <span class="controls-title">Controlling →</span>
-      <div class="target-select" id="target-select">
-        <button class="target-btn active" data-target="dark"  id="btn-dark">Dark</button>
-        <button class="target-btn"        data-target="light" id="btn-light">Light</button>
-        <button class="target-btn"        data-target="glass" id="btn-glass">Glass</button>
-      </div>
+      <span class="controls-title">Controlling the Unstyled sphere</span>
     </div>
 
     <div class="sliders-grid">
@@ -112,9 +90,9 @@
       <div class="slider-group">
         <div class="slider-top">
           <label class="slider-label" for="ctrl-speed">speed</label>
-          <span class="slider-value" id="val-speed">0.03</span>
+          <span class="slider-value" id="val-speed">0.015</span>
         </div>
-        <input type="range" id="ctrl-speed" min="0.005" max="0.12" value="0.03" step="0.005" />
+        <input type="range" id="ctrl-speed" min="0.001" max="0.08" value="0.015" step="0.001" />
         <span class="slider-desc">Idle rotation speed (rad/frame)</span>
       </div>
 
@@ -130,19 +108,28 @@
   </div>
 </section>
 
-<!-- ── Code snippets ───────────────────────────────────────────────────── -->
+<!-- Code snippets -->
 <section class="section">
   <p class="section-label">Usage</p>
-  <h2 class="section-title">Drop-in for any framework</h2>
-  <p class="section-desc">One function, three environments, zero dependencies.</p>
 
   <div class="snippet-grid">
     <!-- Vanilla JS -->
     <div class="snippet-card">
       <div class="snippet-bar">
         <span class="snippet-lang">Vanilla JS</span>
+        <button
+          id="copy-vanilla-btn"
+          class="snippet-copy-btn icon-btn"
+          type="button"
+          aria-label="Copy code example"
+          title="Copy code example"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M16 1H6a2 2 0 0 0-2 2v12h2V3h10V1Zm3 4H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Zm0 16H10V7h9v14Z"/>
+          </svg>
+        </button>
       </div>
-      <pre><span class="kw">import</span> { <span class="fn">tagSphere</span> } <span class="kw">from</span> <span class="str">'tag-sphere'</span>;
+      <pre id="vanilla-code"><span class="kw">import</span> { <span class="fn">tagSphere</span> } <span class="kw">from</span> <span class="str">'tag-sphere'</span>;
 
 <span class="kw">const</span> instance = <span class="fn">tagSphere</span>(
   document.<span class="fn">getElementById</span>(<span class="str">'tc'</span>),
@@ -153,40 +140,9 @@
 <span class="cm">// later:</span>
 instance.<span class="fn">destroy</span>();</pre>
     </div>
-
-    <!-- React -->
-    <div class="snippet-card">
-      <div class="snippet-bar">
-        <span class="snippet-lang">React 18+</span>
-      </div>
-      <pre><span class="kw">import</span> { <span class="fn">TagSphere</span> } <span class="kw">from</span> <span class="str">'tag-sphere/react'</span>;
-
-&lt;<span class="tag">TagSphere</span>
-  <span class="at">tags</span>={[<span class="str">'Astro'</span>, <span class="str">'TypeScript'</span>]}
-  <span class="at">radius</span>={<span class="at">120</span>}
-  <span class="at">speed</span>={<span class="at">0.03</span>}
-  <span class="at">style</span>={{ width: <span class="at">300</span>, height: <span class="at">300</span> }}
-/&gt;</pre>
-    </div>
-
-    <!-- Astro -->
-    <div class="snippet-card">
-      <div class="snippet-bar">
-        <span class="snippet-lang">Astro</span>
-      </div>
-      <pre><span class="kw">import</span> <span class="fn">TagSphere</span> <span class="kw">from</span> <span class="str">'tag-sphere/astro'</span>;
-
-&lt;<span class="tag">TagSphere</span>
-  <span class="at">tags</span>={[<span class="str">'Astro'</span>, <span class="str">'TypeScript'</span>]}
-  <span class="at">radius</span>={<span class="at">120</span>}
-  <span class="at">speed</span>={<span class="at">0.03</span>}
-  <span class="at">client:visible</span>
-/&gt;</pre>
-    </div>
   </div>
 </section>
 
-<!-- ── Footer ──────────────────────────────────────────────────────────── -->
 <footer>
   <p>
     <a href="https://github.com/alexjcm/tag-sphere">GitHub</a> ·

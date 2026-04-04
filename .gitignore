@@ -1,5 +1,7 @@
 node_modules/
+examples/*/node_modules/
 dist/
+site/
 *.js.gz
 .DS_Store
 *.map

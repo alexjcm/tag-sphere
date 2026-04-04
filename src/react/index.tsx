@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { tagSphere } from '../index';
 import type { TagSphereOptions, TagSphereInstance } from '../types';
+import { TagSphereConstraints } from '../constraints';
 
 export type TagSphereProps = TagSphereOptions;
 
@@ -15,33 +16,29 @@ export type TagSphereProps = TagSphereOptions;
  */
 export function TagSphere({
   tags,
-  radius    = 120,
-  speed     = 0.03,
-  direction = 135,
+  radius    = TagSphereConstraints.DEFAULT_RADIUS,
+  speed     = TagSphereConstraints.DEFAULT_SPEED,
+  direction = TagSphereConstraints.DEFAULT_DIRECTION,
   tagClass,
   ...divProps
 }: TagSphereProps & React.HTMLAttributes<HTMLDivElement>) {
-  const ref      = useRef<HTMLDivElement>(null);
-  // Stable ref to always-current options — avoids restarting on every render
-  const optsRef  = useRef<TagSphereOptions>({ tags, radius, speed, direction, tagClass });
-
-  // Keep optsRef in sync without triggering the effect
-  optsRef.current = { tags, radius, speed, direction, tagClass };
+  const ref = useRef<HTMLDivElement>(null);
+  // Compare tags by value so equivalent arrays do not trigger unnecessary re-init.
+  const tagsKey = useMemo(() => JSON.stringify(tags), [tags]);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    // Read latest options at mount time (covers StrictMode double-invoke)
-    const instance: TagSphereInstance = tagSphere(el, optsRef.current);
+    const options: TagSphereOptions = { tags, radius, speed, direction, tagClass };
+    const instance: TagSphereInstance = tagSphere(el, options);
 
     return () => {
       // Cleanup: cancel RAF + remove listeners + remove spans.
-      // Called automatically by React on unmount and on StrictMode double-mount.
+      // Called on unmount and before every options-driven re-init.
       instance.destroy();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // intentionally empty — TagSphere uses destroy()+remount pattern for prop changes
+  }, [tagsKey, tags, radius, speed, direction, tagClass]);
 
   return <div ref={ref} {...divProps} />;
 }
