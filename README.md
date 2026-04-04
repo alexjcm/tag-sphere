@@ -24,7 +24,7 @@ Status legend: `✅ implemented` · `⚠️ partial/pending`
 ## Installation 💿
 
 ```bash
-npm install tag-sphere
+npm i tag-sphere
 ```
 
 ## Quick Start 🚀
@@ -44,9 +44,6 @@ const instance = tagSphere(el, {
   speed: 0.03,
   direction: 135,
 });
-
-// Later:
-// instance.destroy();
 ```
 
 ### React (18+)
@@ -87,50 +84,15 @@ import 'tag-sphere/styles';
 
 ## API Reference 📖
 
-### `tagSphere(container, options)`
-
-- `container`: `HTMLElement` (required).
-- Returns: `{ destroy(): void }`.
-
-`container` must have `position: relative` and a fixed size (`width`/`height`).
-
 ### Options
 
 | Property | Type | Default | Description |
 |---|---|---|---|
 | `tags` | `string[]` | required | Labels to render. Min `1`, max `50` (extra tags are truncated). |
 | `radius` | `number` | `120` | Sphere radius in pixels. Clamped to `[60, 200]`. |
-| `speed` | `number` | `0.03` | Idle angular speed. Normalized to absolute value, rounded to 3 decimals, clamped to `[0.005, 0.08]`. |
+| `speed` | `number` | `0.03` | Idle angular speed. Normalized to absolute value, rounded to 3 decimals, clamped to `[0.001, 0.08]`. |
 | `direction` | `number` | `135` | Idle direction in clockwise degrees, normalized to `[0, 359]`. |
 | `tagClass` | `string` | `undefined` | Extra class added to each `.ts-tag`. |
-
-Runtime validation behavior:
-
-- `tags.length < 1` throws an error.
-- Non-finite numeric values (`NaN`, `Infinity`) fall back to defaults.
-
-### Instance method
-
-- `destroy()`: cancels animation, removes listeners, and removes created spans.
-- Safe to call multiple times.
-
-## Styling (`tag-sphere/styles`) 🎨
-
-Importing `tag-sphere/styles` is optional. The library works without it.
-
-```css
-#my-sphere {
-  --ts-bg: rgba(128, 128, 128, 0.08);
-  --ts-color: inherit;
-  --ts-border: 1px solid rgba(128, 128, 128, 0.2);
-  --ts-radius: 20px;
-  --ts-padding: 3px 10px;
-  --ts-font-size: 0.8rem;
-  --ts-font-weight: 500;
-  --ts-blur: none;
-  --ts-transition: opacity 0.15s;
-}
-```
 
 ## How It Works ⚙️
 
@@ -151,33 +113,35 @@ Depth controls `opacity`, `font-size`, and `z-index` to create perspective.
 npm install
 npm run build
 npm test
-npm run demo
 ```
 
-### Fast local demo loop (instant updates)
+## Examples (Vanilla / React / Astro) 🧪
 
-Use Vite for local iteration. It serves both demos and hot-reloads when you edit files in `src/`.
+Examples are isolated apps under `examples/` so they do not affect the library bundle.
+The examples workspace currently pins Astro to `6.1.3`.
+Contributor-focused workflow and commands live in [examples/README.md](./examples/README.md).
+
+### Run Locally
 
 ```bash
-npm run demo:dev
+npm run examples:install
+npm run examples:dev
 ```
 
-Then open:
+Open the URL shown in the terminal:
 
-- `http://localhost:5173/demo/`
-- `http://localhost:5173/demo2/`
+- `http://localhost:3000` (showcase)
+- sub-demos: `5174` (vanilla), `5175` (react), `5176` (astro)
+- if a port is busy, stop the process using that port or override with `TAG_SPHERE_*_PORT`
 
-Quick open helpers:
+### Build Static Showcase (GitHub Pages)
 
 ```bash
-npm run demo:dev:1
-npm run demo:dev:2
+npm run examples:build
 ```
 
-Notes:
-
-- `npm run demo` stays as a plain static server (matches GitHub Pages behavior).
-- In Vite dev mode, demo imports are aliased to `src/index.ts` so library changes appear immediately.
+This generates `site/` with the unified showcase and the three demos.
+For GitHub Pages, publish the full `site/` folder (not only `index.html`).
 
 ## License 📜
 

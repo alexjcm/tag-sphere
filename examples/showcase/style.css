@@ -1,0 +1,112 @@
+@import '../shared/theme.css';
+@import '../shared/example-docs.css';
+
+:root {
+  --page-max: 1240px;
+}
+
+.showcase-tools {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 1rem;
+}
+
+.install-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.install-group .install-code {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+
+.install-group .copy-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  margin: 0 0 1rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+}
+
+.tab:hover {
+  border-color: color-mix(in srgb, var(--accent-2) 45%, var(--border));
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+.tab.is-active {
+  background: linear-gradient(120deg, rgba(73, 214, 255, 0.2), rgba(255, 79, 139, 0.22));
+  border-color: color-mix(in srgb, var(--accent-2) 52%, var(--border));
+}
+
+.viewer-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.meta h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.meta a {
+  color: var(--accent-2);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.meta a:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.viewer {
+  width: 100%;
+  height: min(920px, 78vh);
+  border: 0;
+  background: #0b1020;
+}
+
+@media (max-width: 720px) {
+  .meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

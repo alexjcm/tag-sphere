@@ -1,0 +1,183 @@
+.resource-grid {
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.resource-card {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.resource-card h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.snippet-head {
+  margin: 0 0 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.snippet-head h2 {
+  margin: 0;
+}
+
+.install-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.install-code {
+  display: inline-block;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  color: var(--code-text);
+  border-radius: 10px;
+  padding: 0.5rem 0.65rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88rem;
+}
+
+.copy-btn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--accent-2) 42%, var(--border));
+  background: color-mix(in srgb, var(--surface-2) 86%, transparent);
+  color: var(--text);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.copy-btn:hover {
+  border-color: color-mix(in srgb, var(--accent-2) 65%, var(--border));
+}
+
+.copy-btn:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+.copy-btn .icon-copy,
+.copy-btn .icon-copied {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.copy-btn .icon-copied {
+  display: none;
+}
+
+.copy-btn.is-copied {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.copy-btn.is-copied .icon-copy {
+  display: none;
+}
+
+.copy-btn.is-copied .icon-copied {
+  display: block;
+}
+
+.repo-link {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  color: var(--accent-2);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.repo-link .repo-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.repo-link:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.code-block {
+  margin: 0;
+  border-radius: 12px;
+  border: 1px solid var(--code-border);
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 0.9rem;
+  overflow-x: auto;
+  font-size: 0.82rem;
+  line-height: 1.32;
+}
+
+.code-block code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre;
+}
+
+.code-line {
+  display: block;
+  min-height: 1em;
+}
+
+.tok-keyword {
+  color: var(--code-keyword);
+}
+
+.tok-string {
+  color: var(--code-string);
+}
+
+.tok-number {
+  color: var(--code-number);
+}
+
+.tok-function {
+  color: var(--code-function);
+}
+
+.tok-variable {
+  color: var(--code-variable);
+}
+
+.tok-property {
+  color: var(--code-text);
+}
+
+.tok-tag {
+  color: var(--code-tag);
+}
+
+input[type='range']:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
