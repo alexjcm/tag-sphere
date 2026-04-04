@@ -6,3 +6,4 @@ site/
 *.js.gz
 .DS_Store
 *.map
+*.tgz

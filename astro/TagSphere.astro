@@ -24,9 +24,9 @@ interface Props {
 
 const {
   tags,
-  radius    = 120,
-  speed     = 0.03,
-  direction = 135,
+  radius = 120,
+  speed = 0.01,
+  direction = 20,
   tagClass,
   id,
   class: className,
@@ -92,10 +92,10 @@ const containerId = id ?? `ts-${Math.random().toString(36).slice(2, 9)}`;
 
     const instance = tagSphere(el, {
       tags,
-      radius:    d.radius    ? Number(d.radius)    : 120,
-      speed:     d.speed     ? Number(d.speed)     : 0.03,
-      direction: d.direction ? Number(d.direction) : 135,
-      tagClass:  d.tagClass  || undefined,
+      radius: d.radius ? Number(d.radius) : 120,
+      speed: d.speed ? Number(d.speed) : 0.01,
+      direction: d.direction ? Number(d.direction) : 20,
+      tagClass: d.tagClass || undefined,
     });
 
     instances.set(el, instance);

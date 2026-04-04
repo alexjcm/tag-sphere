@@ -1,39 +1,37 @@
 # tag-sphere
 
-A lightweight, dependency-free 3D rotating tag sphere for Vanilla JS, React, and Astro.
+A lightweight, dependency-free 3D rotating tag sphere for Vanilla JS, React, and Astro. [View demo.](https://alexjcm.github.io/tag-sphere)
 
 [![npm version](https://img.shields.io/npm/v/tag-sphere?color=7c6aff&style=flat-square)](https://www.npmjs.com/package/tag-sphere)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/tag-sphere?color=00d4ff&label=min%2Bgzip&style=flat-square)](https://bundlephobia.com/package/tag-sphere)
 [![license](https://img.shields.io/npm/l/tag-sphere?color=6b6b8a&style=flat-square)](./LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?logo=typescript&logoColor=white&style=flat-square)](https://www.typescriptlang.org/)
+[![Node](https://img.shields.io/badge/Node-%3E%3D20-339933?logo=node.js&logoColor=white&style=flat-square)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18%2B-61DAFB?logo=react&logoColor=111827&style=flat-square)](https://react.dev/)
+[![Astro](https://img.shields.io/badge/Astro-Supported-FF5D01?logo=astro&logoColor=white&style=flat-square)](https://astro.build/)
+[![ESM](https://img.shields.io/badge/ESM-only-1f6feb?style=flat-square)](https://nodejs.org/api/esm.html)
 
-## Features ✨
+## Features
 
-Status legend: `✅ implemented` · `⚠️ partial/pending`
+- Ultra lightweight core target: `< 1 KB` (min+brotli).
+- Zero runtime dependencies.
+- Themeable tags with CSS custom properties and optional `tag-sphere/styles`.
+- Framework-ready entrypoints for Vanilla JS, React (18+), and Astro.
+- ESM-only distribution for modern JavaScript/TypeScript tooling.
+- SEO-friendly Astro pre-render strategy with client animation.
+- Mouse and touch interaction support.
 
-- ⚠️ **📦 Ultra Lightweight**: Core target is `< 1 KB` (min+gzip). Current core gzip size is `1016 B`.
-- ✅ **🚀 Zero Dependencies**: No runtime dependencies.
-- ✅ **🌗 Fully Themeable**: CSS custom properties and optional `tag-sphere/styles`.
-- ✅ **🧩 Framework-Ready**: Vanilla API + official React (18+) and Astro entrypoints.
-- ⚠️ **🔍 SEO Friendly**: Astro pre-renders static tags. React wrapper renders tags client-side (not static pre-render by default).
-- ✅ **📱 Touch Support**: Touch interaction implemented (`touchmove`/`touchend`, passive move listener).
-
-## Demo 🎮
-
-[alexjcm.github.io/tag-sphere](https://alexjcm.github.io/tag-sphere)
-
-## Installation 💿
+## Installation
 
 ```bash
 npm i tag-sphere
 ```
 
-## Quick Start 🚀
+## Quick Start
 
 ### Vanilla JS
 
 ```ts
 import { tagSphere } from 'tag-sphere';
-import 'tag-sphere/styles'; // optional
 
 const el = document.getElementById('my-sphere');
 if (!el) throw new Error('Missing #my-sphere container');
@@ -46,7 +44,7 @@ const instance = tagSphere(el, {
 });
 ```
 
-### React (18+)
+### React
 
 ```tsx
 import { TagSphere } from 'tag-sphere/react';
@@ -82,7 +80,7 @@ import 'tag-sphere/styles';
 />
 ```
 
-## API Reference 📖
+## API Reference
 
 ### Options
 
@@ -90,64 +88,45 @@ import 'tag-sphere/styles';
 |---|---|---|---|
 | `tags` | `string[]` | required | Labels to render. Min `1`, max `50` (extra tags are truncated). |
 | `radius` | `number` | `120` | Sphere radius in pixels. Clamped to `[60, 200]`. |
-| `speed` | `number` | `0.03` | Idle angular speed. Normalized to absolute value, rounded to 3 decimals, clamped to `[0.001, 0.08]`. |
-| `direction` | `number` | `135` | Idle direction in clockwise degrees, normalized to `[0, 359]`. |
+| `speed` | `number` | `0.01` | Idle angular speed. Normalized to absolute value, rounded to 3 decimals, clamped to `[0.001, 0.08]`. |
+| `direction` | `number` | `20` | Idle direction in clockwise degrees, normalized to `[0, 359]`. |
 | `tagClass` | `string` | `undefined` | Extra class added to each `.ts-tag`. |
 
-## How It Works ⚙️
+## Runtime Compatibility
 
-### 1) Spherical distribution (Fibonacci spherical lattice)
+- Core library: Node `>=20`.
+- Astro modern projects: Node `>=24` (Astro tooling requirement).
 
-Each tag is placed using a Fibonacci-based spherical distribution to avoid pole clustering.
-This gives a visually uniform distribution in `O(N)`.
+## Bundle Size Policy (Brotli)
 
-### 2) Rotation + depth cue
+Primary size KPI is Brotli-compressed output.
 
-On every `requestAnimationFrame`, points rotate and depth is derived from `z`:
+- Core target: `dist/index.js <= 1024 B` (brotli).
+- Styles target: `styles/tag-sphere.css <= 400 B` (brotli).
 
-Depth controls `opacity`, `font-size`, and `z-index` to create perspective.
+Run size report:
 
-## Development 🛠️
+```bash
+npm run size
+```
 
-Node compatibility:
+Run CI check:
 
-- Library (`tag-sphere` core + React entry): `Node >=20`
-- Examples/Showcase (includes Astro demo): `Node >=24`
+```bash
+npm run size:check
+```
+
+## Development
 
 ```bash
 npm install
 npm run build
-npm test
 ```
 
-## Examples (Vanilla / React / Astro) 🧪
+## Examples
 
-Examples are isolated apps under `examples/` so they do not affect the library bundle.
-The examples workspace currently pins Astro to `6.1.3`.
-Contributor-focused workflow and commands live in [examples/README.md](./examples/README.md).
+Isolated demos live in `examples/`. Extended notes are in [examples/README.md](./examples/README.md).
 
-### Run Locally
-
-```bash
-npm run examples:install
-npm run examples:dev
-```
-
-Open the URL shown in the terminal:
-
-- `http://localhost:3000` (showcase)
-- sub-demos: `5174` (vanilla), `5175` (react), `5176` (astro)
-- if a port is busy, stop the process using that port or override with `TAG_SPHERE_*_PORT`
-
-### Build Static Showcase (GitHub Pages)
-
-```bash
-npm run examples:build
-```
-
-This generates `site/` with the unified showcase and the three demos.
-For GitHub Pages, publish the full `site/` folder (not only `index.html`).
-
-## License 📜
+## License
 
 [MIT](./LICENSE) © alexjcm

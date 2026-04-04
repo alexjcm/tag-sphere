@@ -23,6 +23,11 @@ npm run examples:install
 npm run examples:dev
 ```
 
+Dev mode behavior:
+
+- `dev` uses local source from this repo (`src/` + `styles/`) via alias.
+- This keeps iteration fast without publishing first.
+
 Node requirement: `Node >=24` (Astro 6 in this workspace requires it).
 
 Open the URL printed in the terminal (usually `http://localhost:3000`).
@@ -52,6 +57,13 @@ From the repository root:
 ```bash
 npm run examples:build
 ```
+
+Build mode behavior:
+
+- `build` uses the published npm package, not local source aliases.
+- Before build, the root script syncs `examples/package.json`:
+  - tries root version first (exact)
+  - falls back to npm `dist-tags.latest` if root version is not published yet
 
 Node requirement for this build: `Node >=24`.
 

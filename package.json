@@ -1,6 +1,6 @@
 {
   "name": "tag-sphere",
-  "version": "0.1.0",
+  "version": "0.1.0-beta.1",
   "description": "Lightweight 3D rotating tag sphere. No dependencies. Works with Vanilla JS, React and Astro.",
   "type": "module",
   "keywords": [
@@ -18,7 +18,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alexjcm/tag-sphere"
+    "url": "git+https://github.com/alexjcm/tag-sphere.git"
   },
   "homepage": "https://alexjcm.github.io/tag-sphere",
   "devDependencies": {
@@ -51,28 +51,31 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "default": "./dist/index.js"
     },
     "./react": {
       "types": "./dist/react/index.d.ts",
       "import": "./dist/react/index.js",
-      "require": "./dist/react/index.cjs"
+      "default": "./dist/react/index.js"
     },
     "./astro": "./astro/TagSphere.astro",
     "./styles": "./styles/tag-sphere.css"
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "size": "npm run build && node ./scripts/size-report.mjs",
+    "size:check": "npm run build && node ./scripts/size-report.mjs --check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "examples:install": "npm --prefix examples install",
+    "examples:sync-version": "node ./scripts/sync-examples-version.mjs",
+    "examples:install": "npm run examples:sync-version && npm --prefix examples install",
     "examples:dev": "npm --prefix examples run dev",
-    "examples:build": "npm --prefix examples run build",
-    "prepublishOnly": "npm run build && npm test"
+    "examples:build": "npm run examples:sync-version && npm --prefix examples run build",
+    "prepublishOnly": "npm test && npm run size:check"
   },
   "peerDependencies": {
     "react": ">=18",

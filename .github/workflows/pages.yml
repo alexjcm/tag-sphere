@@ -27,11 +27,17 @@ jobs:
       - name: Install root dependencies
         run: npm ci
 
+      - name: Sync examples package version
+        run: npm run examples:sync-version
+
       - name: Install examples dependencies
-        run: npm --prefix examples ci
+        run: npm --prefix examples install
+
+      - name: Verify installed tag-sphere version in examples
+        run: npm --prefix examples ls tag-sphere
 
       - name: Build examples showcase
-        run: npm run examples:build
+        run: npm --prefix examples run build
 
       - name: Disable Jekyll processing
         run: touch site/.nojekyll

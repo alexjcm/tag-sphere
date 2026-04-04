@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { tagSphere } from '../index';
 import type { TagSphereOptions, TagSphereInstance } from '../types';
-import { TagSphereConstraints } from '../constraints';
 
 export type TagSphereProps = TagSphereOptions;
+
+const DEFAULT_RADIUS = 120;
+const DEFAULT_SPEED = 0.01;
+const DEFAULT_DIRECTION = 20;
 
 /**
  * React wrapper for tag-sphere.
@@ -16,9 +19,9 @@ export type TagSphereProps = TagSphereOptions;
  */
 export function TagSphere({
   tags,
-  radius    = TagSphereConstraints.DEFAULT_RADIUS,
-  speed     = TagSphereConstraints.DEFAULT_SPEED,
-  direction = TagSphereConstraints.DEFAULT_DIRECTION,
+  radius = DEFAULT_RADIUS,
+  speed = DEFAULT_SPEED,
+  direction = DEFAULT_DIRECTION,
   tagClass,
   ...divProps
 }: TagSphereProps & React.HTMLAttributes<HTMLDivElement>) {
@@ -38,7 +41,7 @@ export function TagSphere({
       // Called on unmount and before every options-driven re-init.
       instance.destroy();
     };
-  }, [tagsKey, tags, radius, speed, direction, tagClass]);
+  }, [tagsKey, radius, speed, direction, tagClass]);
 
   return <div ref={ref} {...divProps} />;
 }
