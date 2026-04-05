@@ -21,6 +21,9 @@
     "url": "git+https://github.com/alexjcm/tag-sphere.git"
   },
   "homepage": "https://alexjcm.github.io/tag-sphere",
+  "workspaces": [
+    "examples"
+  ],
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -58,6 +61,11 @@
       "import": "./dist/react/index.js",
       "default": "./dist/react/index.js"
     },
+    "./astro-client": {
+      "types": "./dist/astro-client.d.ts",
+      "import": "./dist/astro-client.js",
+      "default": "./dist/astro-client.js"
+    },
     "./astro": "./astro/TagSphere.astro",
     "./styles": "./styles/styles.css",
     "./styles.css": "./styles/styles.css"
@@ -72,10 +80,9 @@
     "size:check": "npm run build && node ./scripts/size-report.mjs --check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "examples:sync-version": "node ./scripts/sync-examples-version.mjs",
-    "examples:install": "npm run examples:sync-version && npm --prefix examples install",
-    "examples:dev": "npm --prefix examples run dev",
-    "examples:build": "npm run examples:sync-version && npm --prefix examples run build",
+    "examples:install": "npm install",
+    "examples:dev": "npm run dev -w tag-sphere-examples",
+    "examples:build": "npm run build -w tag-sphere-examples",
     "prepublishOnly": "npm test && npm run size:check"
   },
   "peerDependencies": {

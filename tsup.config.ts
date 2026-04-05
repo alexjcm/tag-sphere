@@ -4,6 +4,7 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
     'react/index': 'src/react/index.tsx',
+    'astro-client': 'src/astro-client.ts',
   },
   format: ['esm'],
   dts: true,

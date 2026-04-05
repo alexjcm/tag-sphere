@@ -9,7 +9,7 @@
     "astro": "6.1.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tag-sphere": "0.1.0-beta.0"
+    "tag-sphere": "*"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.4",

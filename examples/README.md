@@ -19,7 +19,7 @@ This folder contains isolated demo apps used to validate library changes before 
 From the repository root:
 
 ```bash
-npm run examples:install
+npm install
 npm run examples:dev
 ```
 
@@ -43,9 +43,9 @@ Default ports:
 From the repository root:
 
 ```bash
-npm --prefix examples run dev:vanilla
-npm --prefix examples run dev:react
-npm --prefix examples run dev:astro
+npm run dev:vanilla -w tag-sphere-examples
+npm run dev:react -w tag-sphere-examples
+npm run dev:astro -w tag-sphere-examples
 ```
 
 ## Build For GitHub Pages
@@ -56,13 +56,8 @@ From the repository root:
 npm run examples:build
 ```
 
-Build mode behavior:
-
-- `build` uses the published npm package for JS entrypoints.
-- CSS entrypoint (`styles.css`) is resolved locally to keep demos reproducible while unpublished package versions are in progress.
-- Before build, the root script syncs `examples/package.json`:
-  - tries root version first (exact)
-  - falls back to npm `dist-tags.latest` if root version is not published yet
+- `build` uses the Workspace symlink to build against your local source changes.
+- CSS entrypoint (`styles.css`) is resolved locally.
 
 Node requirement for this build: `Node >=24`.
 

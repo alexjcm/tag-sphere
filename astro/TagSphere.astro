@@ -40,7 +40,6 @@ const containerId = id ?? `ts-${Math.random().toString(36).slice(2, 9)}`;
 
 <!--
   Pre-rendered spans: visible to crawlers before JS runs (SEO-friendly).
-  The client script replaces them with animated versions.
 -->
 <div
   id={containerId}
@@ -64,55 +63,11 @@ const containerId = id ?? `ts-${Math.random().toString(36).slice(2, 9)}`;
    * Astro hoists and deduplicates this <script> automatically.
    * It runs once per page, initialising all [data-tag-sphere] containers.
    */
-  import { tagSphere } from 'tag-sphere';
+  import { initTagSphereAstro } from 'tag-sphere/astro-client';
 
-  type TagSphereInstance = { destroy: () => void };
-  // Track one live instance per container to avoid stacked RAF loops/listeners
-  // when Astro re-runs scripts after view transitions.
-  const instances = new Map<HTMLElement, TagSphereInstance>();
+  initTagSphereAstro();
 
-  function cleanupDetached(): void {
-    for (const [el, instance] of instances) {
-      if (!el.isConnected) {
-        instance.destroy();
-        instances.delete(el);
-      }
-    }
-  }
-
-  function initContainer(el: HTMLElement): void {
-    const prev = instances.get(el);
-    if (prev) prev.destroy();
-
-    const d = el.dataset;
-    const tags: string[] = JSON.parse(d.tags ?? '[]');
-
-    // Clear pre-rendered static spans before creating animated ones
-    el.innerHTML = '';
-
-    const instance = tagSphere(el, {
-      tags,
-      radius: d.radius ? Number(d.radius) : 120,
-      speed: d.speed ? Number(d.speed) : 0.01,
-      direction: d.direction ? Number(d.direction) : 20,
-      tagClass: d.tagClass || undefined,
-    });
-
-    instances.set(el, instance);
-  }
-
-  function initAll(): void {
-    cleanupDetached();
-    document
-      .querySelectorAll<HTMLElement>('[data-tag-sphere]')
-      .forEach(initContainer);
-  }
-
-  // Run on initial load
-  initAll();
-
-  // Support Astro View Transitions (re-run after page swap)
   document.addEventListener('astro:page-load', () => {
-    initAll();
+    initTagSphereAstro();
   });
 </script>
