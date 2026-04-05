@@ -9,7 +9,7 @@ export default defineConfig(({ command }) => {
 
   return {
     root,
-    cacheDir: '../node_modules/.vite-vanilla',
+    cacheDir: 'node_modules/.vite-vanilla',
     resolve: useLocalSource
       ? {
         alias: [

@@ -10,15 +10,11 @@ export default defineConfig(({ command }) => {
 
   return {
     root,
-    cacheDir: '../node_modules/.vite-react',
+    cacheDir: 'node_modules/.vite-react',
     plugins: [react()],
     resolve: {
       dedupe: ['react', 'react-dom'],
       alias: [
-        { find: /^react$/, replacement: pathResolve(root, '../node_modules/react') },
-        { find: /^react-dom$/, replacement: pathResolve(root, '../node_modules/react-dom') },
-        { find: /^react\/jsx-runtime$/, replacement: pathResolve(root, '../node_modules/react/jsx-runtime.js') },
-        { find: /^react\/jsx-dev-runtime$/, replacement: pathResolve(root, '../node_modules/react/jsx-dev-runtime.js') },
         { find: /^tag-sphere\/styles$/, replacement: pathResolve(root, '../../styles/styles.css') },
         { find: /^tag-sphere\/styles\.css$/, replacement: pathResolve(root, '../../styles/styles.css') },
         ...(useLocalSource

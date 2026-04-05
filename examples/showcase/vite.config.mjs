@@ -9,7 +9,7 @@ const basePath = process.env.TAG_SPHERE_BASE || '/tag-sphere/';
 
 export default defineConfig(({ command }) => ({
   root: showcaseRoot,
-  cacheDir: '../node_modules/.vite-showcase',
+  cacheDir: 'node_modules/.vite-showcase',
   base: command === 'build' ? basePath : '/',
   server: {
     host: devHost,
