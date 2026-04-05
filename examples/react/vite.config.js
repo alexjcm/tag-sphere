@@ -19,11 +19,12 @@ export default defineConfig(({ command }) => {
         { find: /^react-dom$/, replacement: pathResolve(root, '../node_modules/react-dom') },
         { find: /^react\/jsx-runtime$/, replacement: pathResolve(root, '../node_modules/react/jsx-runtime.js') },
         { find: /^react\/jsx-dev-runtime$/, replacement: pathResolve(root, '../node_modules/react/jsx-dev-runtime.js') },
+        { find: /^tag-sphere\/styles$/, replacement: pathResolve(root, '../../styles/styles.css') },
+        { find: /^tag-sphere\/styles\.css$/, replacement: pathResolve(root, '../../styles/styles.css') },
         ...(useLocalSource
           ? [
             { find: /^tag-sphere$/, replacement: pathResolve(root, '../../src/index.ts') },
             { find: /^tag-sphere\/react$/, replacement: pathResolve(root, '../../src/react/index.tsx') },
-            { find: /^tag-sphere\/styles$/, replacement: pathResolve(root, '../../styles/tag-sphere.css') },
           ]
           : []),
       ],

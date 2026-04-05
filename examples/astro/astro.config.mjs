@@ -11,13 +11,16 @@ export default defineConfig({
   outDir: '../../site/astro',
   vite: {
     resolve: {
-      alias: isBuild
-        ? []
-        : [
-          { find: /^tag-sphere$/, replacement: pathResolve(root, '../../src/index.ts') },
-          { find: /^tag-sphere\/react$/, replacement: pathResolve(root, '../../src/react/index.tsx') },
-          { find: /^tag-sphere\/styles$/, replacement: pathResolve(root, '../../styles/tag-sphere.css') },
-        ],
+      alias: [
+        { find: /^tag-sphere\/styles$/, replacement: pathResolve(root, '../../styles/styles.css') },
+        { find: /^tag-sphere\/styles\.css$/, replacement: pathResolve(root, '../../styles/styles.css') },
+        ...(isBuild
+          ? []
+          : [
+            { find: /^tag-sphere$/, replacement: pathResolve(root, '../../src/index.ts') },
+            { find: /^tag-sphere\/react$/, replacement: pathResolve(root, '../../src/react/index.tsx') },
+          ]),
+      ],
     },
   },
 });

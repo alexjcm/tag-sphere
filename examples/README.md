@@ -38,8 +38,6 @@ Default ports:
 - `5175` react
 - `5176` astro
 
-If a port is already in use, free it or override with `TAG_SPHERE_*_PORT`.
-
 ## Work Per Demo
 
 From the repository root:
@@ -60,7 +58,8 @@ npm run examples:build
 
 Build mode behavior:
 
-- `build` uses the published npm package, not local source aliases.
+- `build` uses the published npm package for JS entrypoints.
+- CSS entrypoint (`styles.css`) is resolved locally to keep demos reproducible while unpublished package versions are in progress.
 - Before build, the root script syncs `examples/package.json`:
   - tries root version first (exact)
   - falls back to npm `dist-tags.latest` if root version is not published yet

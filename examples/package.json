@@ -13,16 +13,18 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.4",
+    "shiki": "^3.13.0",
     "vite": "^7.3.1"
   },
   "overrides": {
     "defu": "6.1.3"
   },
   "scripts": {
-    "dev": "node ./scripts/dev-unified.mjs",
-    "dev:vanilla": "vite --config ./vanilla/vite.config.js",
-    "dev:react": "vite --config ./react/vite.config.js",
-    "dev:astro": "astro dev --root ./astro",
-    "build": "vite build --config ./showcase/vite.config.mjs && vite build --config ./vanilla/vite.config.js && vite build --config ./react/vite.config.js && astro build --root ./astro"
+    "snippets:generate": "node ./scripts/generate-snippets.mjs",
+    "dev": "npm run snippets:generate && node ./scripts/dev-unified.mjs",
+    "dev:vanilla": "npm run snippets:generate && vite --config ./vanilla/vite.config.js",
+    "dev:react": "npm run snippets:generate && vite --config ./react/vite.config.js",
+    "dev:astro": "npm run snippets:generate && astro dev --root ./astro",
+    "build": "npm run snippets:generate && vite build --config ./showcase/vite.config.mjs && vite build --config ./vanilla/vite.config.js && vite build --config ./react/vite.config.js && astro build --root ./astro"
   }
 }

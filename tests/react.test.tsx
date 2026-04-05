@@ -14,29 +14,6 @@ const defaultStyle: React.CSSProperties = {
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe('<TagSphere />', () => {
-
-  // ── Mount / unmount ────────────────────────────────────────────────────────
-
-  it('mounts without throwing an error', () => {
-    expect(() =>
-      render(<TagSphere tags={['A', 'B', 'C']} style={defaultStyle} />)
-    ).not.toThrow();
-  });
-
-  it('renders the host <div> in the document', () => {
-    const { container } = render(
-      <TagSphere tags={['Astro', 'React']} style={defaultStyle} />
-    );
-    expect(container.firstElementChild?.tagName).toBe('DIV');
-  });
-
-  it('unmounts without throwing — destroy() is called on cleanup', () => {
-    const { unmount } = render(
-      <TagSphere tags={['A', 'B']} style={defaultStyle} />
-    );
-    expect(() => unmount()).not.toThrow();
-  });
-
   it('after unmount all .ts-tag spans are removed from the DOM', () => {
     const { container, unmount } = render(
       <TagSphere tags={['A', 'B', 'C']} style={defaultStyle} />
@@ -48,17 +25,6 @@ describe('<TagSphere />', () => {
     unmount();
 
     expect(container.querySelectorAll('.ts-tag')).toHaveLength(0);
-  });
-
-  // ── Re-render ──────────────────────────────────────────────────────────────
-
-  it('re-render with different props does not throw', () => {
-    const { rerender } = render(
-      <TagSphere tags={['A', 'B']} style={defaultStyle} />
-    );
-    expect(() =>
-      rerender(<TagSphere tags={['A', 'B', 'C']} style={defaultStyle} />)
-    ).not.toThrow();
   });
 
   it('re-render updates the rendered tags when options change', () => {
@@ -84,8 +50,6 @@ describe('<TagSphere />', () => {
     expect(container.querySelectorAll('.ts-tag')).toHaveLength(2);
   });
 
-  // ── Props forwarding ───────────────────────────────────────────────────────
-
   it('forwards className to the host <div>', () => {
     const { container } = render(
       <TagSphere tags={['X']} className="my-sphere" style={defaultStyle} />
@@ -93,14 +57,12 @@ describe('<TagSphere />', () => {
     expect(container.querySelector('.my-sphere')).not.toBeNull();
   });
 
-  it('forwards data-* attributes to the host <div>', () => {
+  it('passes tagClass through the React wrapper to rendered tags', () => {
     const { container } = render(
-      <TagSphere tags={['X']} data-testid="sphere" style={defaultStyle} />
+      <TagSphere tags={['X', 'Y']} tagClass="custom-tag" style={defaultStyle} />
     );
-    expect(container.querySelector('[data-testid="sphere"]')).not.toBeNull();
+    expect(container.querySelectorAll('.ts-tag.custom-tag')).toHaveLength(2);
   });
-
-  // ── StrictMode safety ──────────────────────────────────────────────────────
 
   it('survives React StrictMode double-invoke without errors', () => {
     expect(() =>

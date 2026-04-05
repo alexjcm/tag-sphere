@@ -46,8 +46,12 @@ function createSpans(el: HTMLElement, tags: string[], tagClass?: string): HTMLSp
 }
 
 export function tagSphere(el: HTMLElement, options: TagSphereOptions): TagSphereInstance {
+  if (!el || el.nodeType !== 1) {
+    throw new TypeError('tagSphere: invalid element.');
+  }
+
   if (options.tags.length < MIN_TAGS) {
-    throw new Error(`tagSphere: "tags" must contain at least ${MIN_TAGS} item.`);
+    throw new Error('tagSphere: tags must not be empty.');
   }
 
   const tags = options.tags.slice(0, MAX_TAGS);

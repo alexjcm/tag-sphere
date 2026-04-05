@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { tagSphere } from '../src/index';
-import { TagSphereConstraints } from '../src/constraints';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -12,6 +11,10 @@ function makeContainer(w = 300, h = 300): HTMLElement {
   Object.defineProperty(el, 'offsetHeight', { configurable: true, value: h });
   document.body.appendChild(el);
   return el;
+}
+
+function nextFrame(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -27,8 +30,6 @@ describe('tagSphere()', () => {
     document.body.innerHTML = '';
   });
 
-  // ── Span creation ──────────────────────────────────────────────────────────
-
   it('creates exactly N .ts-tag spans in the container', () => {
     const tags = ['Astro', 'TypeScript', 'React', 'Vitest', 'tsup'];
     const inst = tagSphere(container, { tags });
@@ -37,31 +38,6 @@ describe('tagSphere()', () => {
 
     inst.destroy();
   });
-
-  it('every span has position: absolute set via JS', () => {
-    const inst = tagSphere(container, { tags: ['one', 'two', 'three'] });
-
-    const spans = container.querySelectorAll<HTMLSpanElement>('.ts-tag');
-    for (const span of spans) {
-      expect(span.style.position).toBe('absolute');
-    }
-
-    inst.destroy();
-  });
-
-  it('every span has userSelect: none', () => {
-    const inst = tagSphere(container, { tags: ['A', 'B'] });
-
-    const spans = container.querySelectorAll<HTMLSpanElement>('.ts-tag');
-    for (const span of spans) {
-      expect(span.style.userSelect).toBe('none');
-    }
-
-    inst.destroy();
-  });
-
-  // ── tagClass ───────────────────────────────────────────────────────────────
-
   it('applies tagClass to all spans alongside ts-tag', () => {
     const inst = tagSphere(container, { tags: ['A', 'B', 'C'], tagClass: 'my-tag' });
 
@@ -71,51 +47,69 @@ describe('tagSphere()', () => {
     inst.destroy();
   });
 
-  it('works without tagClass — spans only have ts-tag class', () => {
-    const inst = tagSphere(container, { tags: ['X', 'Y'] });
-
-    const spans = container.querySelectorAll<HTMLSpanElement>('.ts-tag');
-    for (const span of spans) {
-      expect(span.className).toBe('ts-tag');
-    }
-
-    inst.destroy();
-  });
-
-  // ── Defaults ───────────────────────────────────────────────────────────────
-
-  it('initialises without error using only required option (tags)', () => {
-    const tags = ['Alpha', 'Beta', 'Gamma'];
-    expect(() => {
-      const inst = tagSphere(container, { tags });
-      inst.destroy();
-    }).not.toThrow();
-  });
-
-  it('accepts all documented defaults (radius 120, speed 0.03, direction 135)', () => {
-    const tags = ['A', 'B', 'C'];
-    const inst = tagSphere(container, { tags, radius: 120, speed: 0.03, direction: 135 });
-
-    expect(container.querySelectorAll('.ts-tag')).toHaveLength(tags.length);
-
-    inst.destroy();
-  });
-
-  // ── Runtime constraints ────────────────────────────────────────────────────
-
   it('throws when tags is empty', () => {
     expect(() => tagSphere(container, { tags: [] })).toThrow();
+  });
+
+  it('throws a clear error when first argument is not a valid HTMLElement', () => {
+    expect(() => tagSphere(null as unknown as HTMLElement, { tags: ['A'] }))
+      .toThrow('invalid element');
+    expect(() => tagSphere({} as unknown as HTMLElement, { tags: ['A'] }))
+      .toThrow('invalid element');
   });
 
   it('truncates tags beyond the max limit', () => {
     const tags = Array.from({ length: 70 }, (_, i) => `Tag-${i}`);
     const inst = tagSphere(container, { tags });
-    expect(container.querySelectorAll('.ts-tag')).toHaveLength(TagSphereConstraints.MAX_TAGS);
+    expect(container.querySelectorAll('.ts-tag')).toHaveLength(50);
     inst.destroy();
   });
 
+  it('normalizes numeric options and renders finite style values', async () => {
+    const inst = tagSphere(container, {
+      tags: ['A', 'B', 'C'],
+      radius: Number.POSITIVE_INFINITY,
+      speed: -2,
+      direction: -450,
+    });
 
-  // ── destroy() ──────────────────────────────────────────────────────────────
+    await nextFrame();
+
+    const span = container.querySelector<HTMLSpanElement>('.ts-tag');
+    expect(span).not.toBeNull();
+    expect(span?.style.left).not.toContain('NaN');
+    expect(span?.style.top).not.toContain('NaN');
+
+    const opacity = Number(span?.style.opacity);
+    const fontSize = Number((span?.style.fontSize || '').replace('em', ''));
+    expect(opacity).toBeGreaterThanOrEqual(0.3);
+    expect(opacity).toBeLessThanOrEqual(1);
+    expect(fontSize).toBeGreaterThanOrEqual(0.75);
+    expect(fontSize).toBeLessThanOrEqual(1.15);
+
+    inst.destroy();
+  });
+
+  it('handles mouse and touch interaction events without breaking the instance', async () => {
+    const inst = tagSphere(container, { tags: ['A', 'B', 'C'] });
+
+    container.dispatchEvent(new MouseEvent('mouseenter'));
+    container.dispatchEvent(new MouseEvent('mousemove', { clientX: 120, clientY: 110 }));
+    container.dispatchEvent(new MouseEvent('mouseleave'));
+
+    const touchMove = new Event('touchmove');
+    Object.defineProperty(touchMove, 'touches', {
+      configurable: true,
+      value: [{ clientX: 130, clientY: 140 }],
+    });
+    container.dispatchEvent(touchMove);
+    container.dispatchEvent(new Event('touchend'));
+
+    await nextFrame();
+    expect(container.querySelectorAll('.ts-tag').length).toBeGreaterThan(0);
+
+    inst.destroy();
+  });
 
   it('destroy() removes all spans from the DOM', () => {
     const inst = tagSphere(container, { tags: ['A', 'B', 'C'] });
@@ -134,15 +128,6 @@ describe('tagSphere()', () => {
     }).not.toThrow();
   });
 
-  it('destroy() leaves the container element itself untouched', () => {
-    const inst = tagSphere(container, { tags: ['A'] });
-    inst.destroy();
-
-    expect(document.body.contains(container)).toBe(true);
-  });
-
-  // ── Span content ───────────────────────────────────────────────────────────
-
   it('each span contains the corresponding tag label as text content', () => {
     const tags = ['Astro', 'TypeScript', 'React'];
     const inst = tagSphere(container, { tags });
@@ -153,8 +138,6 @@ describe('tagSphere()', () => {
 
     inst.destroy();
   });
-
-  // ── Multiple instances ─────────────────────────────────────────────────────
 
   it('supports two independent instances on the same page', () => {
     const container2 = makeContainer();

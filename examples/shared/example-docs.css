@@ -121,48 +121,27 @@
   border: 1px solid var(--code-border);
   background: var(--code-bg);
   color: var(--code-text);
-  padding: 0.9rem;
+  padding: 0.95rem 1rem;
   overflow-x: auto;
-  font-size: 0.82rem;
-  line-height: 1.32;
+  font-size: 0.86rem;
+  line-height: 1.35;
 }
 
 .code-block code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-feature-settings: 'calt' 1, 'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  tab-size: 2;
+  white-space: normal;
+}
+
+.code-block code .line {
+  display: block;
   white-space: pre;
 }
 
-.code-line {
-  display: block;
-  min-height: 1em;
-}
-
-.tok-keyword {
-  color: var(--code-keyword);
-}
-
-.tok-string {
-  color: var(--code-string);
-}
-
-.tok-number {
-  color: var(--code-number);
-}
-
-.tok-function {
-  color: var(--code-function);
-}
-
-.tok-variable {
-  color: var(--code-variable);
-}
-
-.tok-property {
-  color: var(--code-text);
-}
-
-.tok-tag {
-  color: var(--code-tag);
+.code-block code .line:empty::before {
+  content: ' ';
 }
 
 input[type='range']:focus-visible {

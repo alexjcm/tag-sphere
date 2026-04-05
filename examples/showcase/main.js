@@ -24,7 +24,7 @@ const isDev = import.meta.env.DEV;
 const routes = {
   vanilla: {
     path: isDev ? `http://${devHost}:${devVanillaPort}/` : './vanilla/',
-    title: 'Vanilla Demo',
+    title: 'Vanilla JS Demo',
   },
   react: {
     path: isDev ? `http://${devHost}:${devReactPort}/` : './react/',
@@ -84,6 +84,8 @@ function activate(key) {
     if (isActive) viewerPanel.setAttribute('aria-labelledby', tab.id);
   }
 
+  viewer.dataset.demo = key;
+  viewerPanel.dataset.demo = key;
   viewer.setAttribute('src', route.path);
   title.textContent = route.title;
   openLink.setAttribute('href', route.path);

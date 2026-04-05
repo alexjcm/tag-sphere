@@ -8,7 +8,7 @@ const CSS_TARGET_BROTLI = 400;
 const files = [
   { label: 'core-esm', path: 'dist/index.js' },
   { label: 'react-esm', path: 'dist/react/index.js' },
-  { label: 'styles', path: 'styles/tag-sphere.css' },
+  { label: 'styles', path: 'styles/styles.css' },
 ];
 
 function formatBytes(bytes) {

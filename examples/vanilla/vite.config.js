@@ -14,7 +14,6 @@ export default defineConfig(({ command }) => {
       ? {
         alias: [
           { find: /^tag-sphere$/, replacement: pathResolve(root, '../../src/index.ts') },
-          { find: /^tag-sphere\/styles$/, replacement: pathResolve(root, '../../styles/tag-sphere.css') },
         ],
       }
       : undefined,

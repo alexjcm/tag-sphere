@@ -1,6 +1,6 @@
 {
   "name": "tag-sphere",
-  "version": "0.1.0-beta.1",
+  "version": "1.0.0",
   "description": "Lightweight 3D rotating tag sphere. No dependencies. Works with Vanilla JS, React and Astro.",
   "type": "module",
   "keywords": [
@@ -45,7 +45,7 @@
     "styles"
   ],
   "sideEffects": [
-    "*.css"
+    "**/*.css"
   ],
   "exports": {
     ".": {
@@ -59,7 +59,8 @@
       "default": "./dist/react/index.js"
     },
     "./astro": "./astro/TagSphere.astro",
-    "./styles": "./styles/tag-sphere.css"
+    "./styles": "./styles/styles.css",
+    "./styles.css": "./styles/styles.css"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

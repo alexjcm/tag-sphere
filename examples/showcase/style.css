@@ -34,8 +34,19 @@
   display: flex;
   gap: 0.6rem;
   justify-content: center;
-  margin: 0 0 1rem;
+  margin: 0 auto 1rem;
+  padding: 0.38rem 0.5rem;
   flex-wrap: wrap;
+  width: max-content;
+  max-width: 100%;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent-2) 30%, var(--border));
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+  backdrop-filter: blur(8px) saturate(122%);
+  -webkit-backdrop-filter: blur(8px) saturate(122%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 8px 16px rgba(2, 8, 29, 0.2);
 }
 
 .tab {
@@ -102,6 +113,18 @@
   height: min(920px, 78vh);
   border: 0;
   background: #0b1020;
+}
+
+.viewer[data-demo='vanilla'] {
+  height: min(1060px, 90vh);
+}
+
+.viewer[data-demo='react'] {
+  height: min(1060px, 90vh);
+}
+
+.viewer[data-demo='astro'] {
+  height: min(1100px, 92vh);
 }
 
 @media (max-width: 720px) {
