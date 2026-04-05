@@ -24,20 +24,14 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v6
 
-      - name: Install root dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Sync examples package version
-        run: npm run examples:sync-version
-
-      - name: Install examples dependencies
-        run: npm --prefix examples install
-
-      - name: Verify installed tag-sphere version in examples
-        run: npm --prefix examples ls tag-sphere
+      - name: Build Core Library
+        run: npm run build
 
       - name: Build examples showcase
-        run: npm --prefix examples run build
+        run: npm run examples:build
 
       - name: Disable Jekyll processing
         run: touch site/.nojekyll
