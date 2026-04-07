@@ -123,9 +123,6 @@
   height: min(1060px, 90vh);
 }
 
-.viewer[data-demo='astro'] {
-  height: min(1100px, 92vh);
-}
 
 @media (max-width: 720px) {
   .meta {

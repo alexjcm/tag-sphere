@@ -6,10 +6,9 @@
     "node": ">=24"
   },
   "dependencies": {
-    "astro": "6.1.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tag-sphere": "*"
+    "tag-sphere": "^1.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.4",
@@ -24,7 +23,6 @@
     "dev": "npm run snippets:generate && node ./scripts/dev-unified.mjs",
     "dev:vanilla": "npm run snippets:generate && vite --config ./vanilla/vite.config.js",
     "dev:react": "npm run snippets:generate && vite --config ./react/vite.config.js",
-    "dev:astro": "npm run snippets:generate && astro dev --root ./astro",
-    "build": "npm run snippets:generate && vite build --config ./showcase/vite.config.mjs && vite build --config ./vanilla/vite.config.js && vite build --config ./react/vite.config.js && astro build --root ./astro"
+    "build": "npm run snippets:generate && vite build --config ./showcase/vite.config.mjs && vite build --config ./vanilla/vite.config.js && vite build --config ./react/vite.config.js"
   }
 }

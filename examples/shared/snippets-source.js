@@ -28,20 +28,4 @@ export function Example() {
   );
 }`,
   },
-  astro: {
-    lang: 'astro',
-    text: `---
-import TagSphere from 'tag-sphere/astro';
-// Optional: Styled (Default) preset
-import 'tag-sphere/styles.css';
----
-
-<TagSphere
-  tags={['Astro', 'TypeScript', 'Vite']}
-  radius={120}
-  speed={0.01}
-  direction={20}
-  style="width:320px;aspect-ratio:1"
-/>`,
-  },
 };

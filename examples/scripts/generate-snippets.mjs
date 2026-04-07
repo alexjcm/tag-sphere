@@ -22,7 +22,7 @@ function toModuleSource(snippets) {
 async function main() {
   const highlighter = await createHighlighter({
     themes: ['github-dark'],
-    langs: ['ts', 'tsx', 'astro'],
+    langs: ['ts', 'tsx'],
   });
 
   const snippets = {};

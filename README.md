@@ -95,7 +95,7 @@ import 'tag-sphere/styles.css'; // Optional
 
 - Core library: Node `>=20`.
 - Astro projects: follow your Astro version requirement.
-- Examples workspace in this repository: Node `>=24` (Astro 6 demo tooling).
+- Examples workspace in this repository: Node `>=24`.
 
 ## Development
 
