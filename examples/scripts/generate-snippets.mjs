@@ -2,10 +2,10 @@ import { writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHighlighter } from 'shiki';
-import { snippetSources } from '../shared/snippets-source.js';
+import { snippetSources } from '../src/data/snippets-source.js';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
-const outputFile = resolve(scriptDir, '../shared/snippets.js');
+const outputFile = resolve(scriptDir, '../src/utils/snippets.js');
 
 function extractCodeInnerHtml(html) {
   const match = html.match(/<code>([\s\S]*?)<\/code>/);

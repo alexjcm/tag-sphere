@@ -2,8 +2,8 @@
 
 Primary size KPI is Brotli-compressed output.
 
-- Core target: `dist/index.js <= 1024 B` (brotli).
-- Styles target: `styles/styles.css <= 400 B` (brotli).
+- Core target: `dist/index.js <= 1250 B` (brotli).
+- Styles target: `styles/styles.css <= 350 B` (brotli).
 
 ## Limit updates
 

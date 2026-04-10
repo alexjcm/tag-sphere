@@ -1,4 +1,5 @@
 :where(.ts-tag) {
+  will-change: transform;
   display: inline-block;
   white-space: nowrap;
   line-height: 1.4;
@@ -12,5 +13,4 @@
   font-size: var(--ts-font-size, 0.8rem);
   font-weight: var(--ts-font-weight, 500);
   backdrop-filter: var(--ts-blur, none);
-  transition: var(--ts-transition, opacity 0.15s ease);
 }

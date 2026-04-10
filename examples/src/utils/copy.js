@@ -9,8 +9,7 @@ const COPIED_ICON = `
   <path fill="currentColor" d="M13.78 4.22a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0L2.22 7.28a.75.75 0 1 1 1.06-1.06L7 9.94l5.72-5.72a.75.75 0 0 1 1.06 0"></path>
 </svg>`;
 
-const CLIPBOARD_REQUEST_TYPE = 'tag-sphere:clipboard-write';
-const CLIPBOARD_RESPONSE_TYPE = 'tag-sphere:clipboard-write:result';
+
 
 export function hydrateCopyButton(
   button,
@@ -39,50 +38,6 @@ function setCopied(button, copiedAria) {
   button.setAttribute('aria-label', copiedAria);
 }
 
-function requestParentClipboardWrite(text) {
-  if (window.parent === window || typeof window.parent?.postMessage !== 'function') {
-    return Promise.resolve(false);
-  }
-
-  const requestId = `copy-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-
-  return new Promise((resolve) => {
-    let done = false;
-
-    const cleanup = () => {
-      window.removeEventListener('message', onMessage);
-      window.clearTimeout(timeoutId);
-    };
-
-    const finish = (ok) => {
-      if (done) return;
-      done = true;
-      cleanup();
-      resolve(Boolean(ok));
-    };
-
-    const onMessage = (event) => {
-      const data = event.data;
-      if (!data || data.type !== CLIPBOARD_RESPONSE_TYPE || data.requestId !== requestId) {
-        return;
-      }
-      finish(data.ok);
-    };
-
-    const timeoutId = window.setTimeout(() => finish(false), 1500);
-    window.addEventListener('message', onMessage);
-
-    window.parent.postMessage(
-      {
-        type: CLIPBOARD_REQUEST_TYPE,
-        requestId,
-        text,
-      },
-      '*',
-    );
-  });
-}
-
 export async function copyWithFeedback(
   button,
   text,
@@ -95,12 +50,7 @@ export async function copyWithFeedback(
   if (!button) return false;
 
   try {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      const copiedFromParent = await requestParentClipboardWrite(text);
-      if (!copiedFromParent) throw new Error('Clipboard write failed.');
-    }
+    await navigator.clipboard.writeText(text);
     clearTimer(button);
     setCopied(button, copiedAria);
 

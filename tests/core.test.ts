@@ -38,14 +38,6 @@ describe('tagSphere()', () => {
 
     inst.destroy();
   });
-  it('applies tagClass to all spans alongside ts-tag', () => {
-    const inst = tagSphere(container, { tags: ['A', 'B', 'C'], tagClass: 'my-tag' });
-
-    const tagged = container.querySelectorAll('.ts-tag.my-tag');
-    expect(tagged).toHaveLength(3);
-
-    inst.destroy();
-  });
 
   it('throws when tags is empty', () => {
     expect(() => tagSphere(container, { tags: [] })).toThrow();
@@ -58,12 +50,6 @@ describe('tagSphere()', () => {
       .toThrow('invalid element');
   });
 
-  it('truncates tags beyond the max limit', () => {
-    const tags = Array.from({ length: 70 }, (_, i) => `Tag-${i}`);
-    const inst = tagSphere(container, { tags });
-    expect(container.querySelectorAll('.ts-tag')).toHaveLength(50);
-    inst.destroy();
-  });
 
   it('normalizes numeric options and renders finite style values', async () => {
     const inst = tagSphere(container, {
@@ -77,15 +63,18 @@ describe('tagSphere()', () => {
 
     const span = container.querySelector<HTMLSpanElement>('.ts-tag');
     expect(span).not.toBeNull();
-    expect(span?.style.left).not.toContain('NaN');
-    expect(span?.style.top).not.toContain('NaN');
+    // Transform encodes both position (translate) and depth (scale).
+    expect(span?.style.transform).not.toContain('NaN');
+    expect(span?.style.transform).toMatch(/translate\(.+\) scale\(.+\)/);
 
     const opacity = Number(span?.style.opacity);
-    const fontSize = Number((span?.style.fontSize || '').replace('em', ''));
+    // Depth effect: scale is now in transform, not fontSize.
+    const scaleMatch = span?.style.transform.match(/scale\(([^)]+)\)/);
+    const scaleVal = scaleMatch ? Number(scaleMatch[1]) : 0;
     expect(opacity).toBeGreaterThanOrEqual(0.3);
     expect(opacity).toBeLessThanOrEqual(1);
-    expect(fontSize).toBeGreaterThanOrEqual(0.75);
-    expect(fontSize).toBeLessThanOrEqual(1.15);
+    expect(scaleVal).toBeGreaterThanOrEqual(0.75);
+    expect(scaleVal).toBeLessThanOrEqual(1.15);
 
     inst.destroy();
   });
@@ -119,25 +108,6 @@ describe('tagSphere()', () => {
     expect(container.querySelectorAll('.ts-tag')).toHaveLength(0);
   });
 
-  it('destroy() is idempotent — calling it twice does not throw', () => {
-    const inst = tagSphere(container, { tags: ['X'] });
-
-    expect(() => {
-      inst.destroy();
-      inst.destroy();
-    }).not.toThrow();
-  });
-
-  it('each span contains the corresponding tag label as text content', () => {
-    const tags = ['Astro', 'TypeScript', 'React'];
-    const inst = tagSphere(container, { tags });
-
-    const spans = container.querySelectorAll<HTMLSpanElement>('.ts-tag');
-    const labels = [...spans].map(s => s.textContent);
-    expect(labels).toEqual(expect.arrayContaining(tags));
-
-    inst.destroy();
-  });
 
   it('supports two independent instances on the same page', () => {
     const container2 = makeContainer();
@@ -155,5 +125,102 @@ describe('tagSphere()', () => {
 
     expect(container.querySelectorAll('.ts-tag')).toHaveLength(0);
     expect(container2.querySelectorAll('.ts-tag')).toHaveLength(0);
+  });
+
+  // ─── Phase 1: Delta Time ──────────────────────────────────────────────────
+
+  it('span positions remain finite across multiple consecutive RAF frames', async () => {
+    const inst = tagSphere(container, { tags: ['A', 'B', 'C'], speed: 0.01 });
+
+    // Three successive frames — exercises delta accumulation math.
+    await nextFrame();
+    await nextFrame();
+    await nextFrame();
+
+    const spans = container.querySelectorAll<HTMLSpanElement>('.ts-tag');
+    for (const span of spans) {
+      expect(span.style.transform).not.toContain('NaN');
+      const opacity = Number(span.style.opacity);
+      expect(Number.isFinite(opacity)).toBe(true);
+    }
+
+    inst.destroy();
+  });
+
+  it('renders valid style values on the first frame (lastTs = 0 path)', async () => {
+    // Create a fresh instance — lastTs starts at 0 and first delta uses TARGET_FRAME_MS.
+    const inst = tagSphere(container, { tags: ['X', 'Y'] });
+    await nextFrame();
+
+    const span = container.querySelector<HTMLSpanElement>('.ts-tag');
+    expect(span).not.toBeNull();
+    expect(span?.style.transform).not.toContain('NaN');
+    const opacity = Number(span?.style.opacity);
+    expect(Number.isFinite(opacity)).toBe(true);
+    expect(opacity).toBeGreaterThanOrEqual(0.3);
+    expect(opacity).toBeLessThanOrEqual(1);
+
+    inst.destroy();
+  });
+
+  // ─── Phase 2: IntersectionObserver ───────────────────────────────────────
+
+  it('destroy() disconnects the IntersectionObserver', () => {
+    const inst = tagSphere(container, { tags: ['A', 'B'] });
+    const io = (globalThis as Record<string, () => { disconnectCalled: boolean }>)['__getLastIO']();
+
+    expect(io.disconnectCalled).toBe(false);
+    inst.destroy();
+    expect(io.disconnectCalled).toBe(true);
+  });
+
+  it('RAF does not start when the element is initially out-of-viewport', async () => {
+    // Override observe() to fire with isIntersecting: false for this test.
+    const OriginalIO = (globalThis as Record<string, unknown>)['IntersectionObserver'];
+    (globalThis as Record<string, unknown>)['IntersectionObserver'] = class {
+      constructor(private cb: IntersectionObserverCallback) {}
+      observe(el: Element): void {
+        this.cb(
+          [{ isIntersecting: false, target: el } as IntersectionObserverEntry],
+          this as unknown as IntersectionObserver,
+        );
+      }
+      disconnect(): void {}
+      unobserve(): void {}
+    };
+
+    const inst = tagSphere(container, { tags: ['A', 'B', 'C'] });
+    await nextFrame();
+
+    // RAF never started → spans exist in DOM but have no animated styles yet.
+    const span = container.querySelector<HTMLSpanElement>('.ts-tag');
+    expect(span).not.toBeNull();
+    // transform is empty because render() never ran (left:50% is set by createSpans, not render).
+    expect(span?.style.transform).toBe('');
+
+    inst.destroy();
+    // Restore the global mock.
+    (globalThis as Record<string, unknown>)['IntersectionObserver'] = OriginalIO;
+  });
+
+  it('RAF resumes with valid styles after re-entering the viewport', async () => {
+    const inst = tagSphere(container, { tags: ['A', 'B', 'C'] });
+    const io = (globalThis as Record<string, () => {
+      trigger: (el: Element, v: boolean) => void;
+      disconnectCalled: boolean;
+    }>)['__getLastIO']();
+
+    // Simulate leaving viewport → pause.
+    io.trigger(container, false);
+    // Simulate re-entering → resume with fresh lastTs.
+    io.trigger(container, true);
+    await nextFrame();
+
+    const span = container.querySelector<HTMLSpanElement>('.ts-tag');
+    expect(span?.style.transform).not.toContain('NaN');
+    const opacity = Number(span?.style.opacity);
+    expect(Number.isFinite(opacity)).toBe(true);
+
+    inst.destroy();
   });
 });

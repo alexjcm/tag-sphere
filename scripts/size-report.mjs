@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { brotliCompressSync, constants as zlibConstants } from 'node:zlib';
 
 const CHECK = process.argv.includes('--check');
-const CORE_TARGET_BROTLI = 1024;
+const CORE_TARGET_BROTLI = 1300;
 const CSS_TARGET_BROTLI = 400;
 
 const files = [

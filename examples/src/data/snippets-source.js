@@ -1,17 +1,4 @@
 export const snippetSources = {
-  vanilla: {
-    lang: 'ts',
-    text: `import { tagSphere } from 'tag-sphere';
-
-const el = document.getElementById('my-sphere');
-
-tagSphere(el, {
-  tags: ['Astro', 'TypeScript', 'React'],
-  radius: 120,
-  speed: 0.01,
-  direction: 20,
-});`,
-  },
   react: {
     lang: 'tsx',
     text: `import { TagSphere } from 'tag-sphere/react';

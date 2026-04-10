@@ -1,7 +1,36 @@
+@import './theme.css';
+@import './example-docs.css';
+
+.showcase-tools {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 1rem;
+}
+
+.install-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.install-group .install-code {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+}
+
+.install-group .copy-btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* React UI Styles Recovered */
 .panel {
   display: grid;
   gap: 1rem;
-  grid-template-columns: minmax(260px, 340px) minmax(260px, 1fr);
+  grid-template-columns: minmax(260px, 420px) minmax(260px, 1fr);
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -10,7 +39,7 @@
 
 .sphere {
   width: 100%;
-  aspect-ratio: 1;
+  height: 340px;
   position: relative;
   border-radius: calc(var(--radius) - 4px);
   background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
@@ -43,6 +72,19 @@ input[type='range'] {
   font-size: 0.9rem;
 }
 
+.sphere .ts-tag {
+  background: color-mix(in srgb, var(--accent-1) 22%, transparent);
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--accent-1) 55%, var(--border));
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
 @media (max-width: 760px) {
   .panel { grid-template-columns: 1fr; }
 }
+
+
+

@@ -6,7 +6,7 @@ const scriptDir = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(scriptDir, '..', '..');
 
 const devHost = process.env.TAG_SPHERE_DEV_HOST || 'localhost';
-const PORTS = { showcase: 3000, vanilla: 5174, react: 5175 };
+const PORTS = { showcase: 3000 };
 const children = [];
 let shuttingDown = false;
 
@@ -29,17 +29,16 @@ function spawnCommand({ name, cmd, args, options }) {
 }
 
 function main() {
-  const env = { ...process.env, TAG_SPHERE_DEV_HOST: devHost, VITE_TAG_SPHERE_DEV_HOST: devHost };
+  const env = { ...process.env, TAG_SPHERE_DEV_HOST: devHost };
   Object.entries(PORTS).forEach(([k, v]) => {
     const key = k.toUpperCase();
-    env[`TAG_SPHERE_${key}_PORT`] = env[`VITE_TAG_SPHERE_${key}_PORT`] = String(v);
+    env[`TAG_SPHERE_${key}_PORT`] = String(v);
   });
 
   const opts = { stdio: 'inherit', shell: false, cwd: rootDir, env };
   const commands = [
-    { name: 'vanilla', cmd: 'npm', args: ['--prefix', 'examples', 'run', 'dev:vanilla', '--', '--host', devHost, '--port', String(PORTS.vanilla), '--strictPort'] },
-    { name: 'react', cmd: 'npm', args: ['--prefix', 'examples', 'run', 'dev:react', '--', '--host', devHost, '--port', String(PORTS.react), '--strictPort'] },
-    { name: 'showcase', cmd: 'npm', args: ['--prefix', 'examples', 'exec', 'vite', '--', '--config', './examples/showcase/vite.config.mjs', '--host', devHost, '--port', String(PORTS.showcase), '--strictPort'] },
+    { name: 'lib', cmd: 'npm', args: ['run', 'dev'] },
+    { name: 'showcase', cmd: 'npm', args: ['--prefix', 'examples', 'exec', 'vite', '--', '--config', './examples/vite.config.mjs', '--host', devHost, '--port', String(PORTS.showcase), '--strictPort'] },
   ];
 
   commands.forEach(c => spawnCommand({ ...c, options: opts }));

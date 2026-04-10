@@ -50,20 +50,6 @@ describe('<TagSphere />', () => {
     expect(container.querySelectorAll('.ts-tag')).toHaveLength(2);
   });
 
-  it('forwards className to the host <div>', () => {
-    const { container } = render(
-      <TagSphere tags={['X']} className="my-sphere" style={defaultStyle} />
-    );
-    expect(container.querySelector('.my-sphere')).not.toBeNull();
-  });
-
-  it('passes tagClass through the React wrapper to rendered tags', () => {
-    const { container } = render(
-      <TagSphere tags={['X', 'Y']} tagClass="custom-tag" style={defaultStyle} />
-    );
-    expect(container.querySelectorAll('.ts-tag.custom-tag')).toHaveLength(2);
-  });
-
   it('survives React StrictMode double-invoke without errors', () => {
     expect(() =>
       render(

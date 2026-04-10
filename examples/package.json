@@ -21,8 +21,6 @@
   "scripts": {
     "snippets:generate": "node ./scripts/generate-snippets.mjs",
     "dev": "npm run snippets:generate && node ./scripts/dev-unified.mjs",
-    "dev:vanilla": "npm run snippets:generate && vite --config ./vanilla/vite.config.js",
-    "dev:react": "npm run snippets:generate && vite --config ./react/vite.config.js",
-    "build": "npm run snippets:generate && vite build --config ./showcase/vite.config.mjs && vite build --config ./vanilla/vite.config.js && vite build --config ./react/vite.config.js"
+    "build": "npm run snippets:generate && vite build"
   }
 }

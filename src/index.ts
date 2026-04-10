@@ -8,10 +8,10 @@ const MAX_RADIUS = 200;
 const DEFAULT_SPEED = 0.01;
 const MIN_SPEED = 0.001;
 const MAX_SPEED = 0.08;
-const SPEED_DECIMALS = 3;
 const DEFAULT_DIRECTION = 20;
 const FULL_TURN_DEGREES = 360;
 const HOVER_SPEED_MULTIPLIER = 1.6;
+const TARGET_FRAME_MS = 1000 / 60;
 
 const MIN_OPACITY = 0.3;
 const OPACITY_RANGE = 0.7;
@@ -38,8 +38,7 @@ function createSpans(el: HTMLElement, tags: string[], tagClass?: string): HTMLSp
     const span = document.createElement('span');
     span.textContent = label;
     span.className = tagClass ? `ts-tag ${tagClass}` : 'ts-tag';
-    span.style.position = 'absolute';
-    span.style.userSelect = 'none';
+    span.style.cssText = 'position:absolute;left:50%;top:50%;will-change:transform;user-select:none;';
     el.appendChild(span);
     return span;
   });
@@ -59,10 +58,7 @@ export function tagSphere(el: HTMLElement, options: TagSphereOptions): TagSphere
     ? Math.min(Math.max(options.radius as number, MIN_RADIUS), MAX_RADIUS)
     : DEFAULT_RADIUS;
   const speed = Number.isFinite(options.speed)
-    ? Number(
-      Math.min(Math.max(Math.abs(options.speed as number), MIN_SPEED), MAX_SPEED)
-        .toFixed(SPEED_DECIMALS),
-    )
+    ? Math.min(Math.max(Math.abs(options.speed as number), MIN_SPEED), MAX_SPEED)
     : DEFAULT_SPEED;
   const direction = Number.isFinite(options.direction)
     ? (((options.direction as number) % FULL_TURN_DEGREES) + FULL_TURN_DEGREES) % FULL_TURN_DEGREES
@@ -70,6 +66,9 @@ export function tagSphere(el: HTMLElement, options: TagSphereOptions): TagSphere
 
   const spans = createSpans(el, tags, options.tagClass);
   const points = fibonacci(tags.length);
+  // One-time layout read — never occurs inside the render loop.
+  const hw = spans.map(s => s.offsetWidth / 2);
+  const hh = spans.map(s => s.offsetHeight / 2);
 
   const rad = (direction * Math.PI) / 180;
   let idleAY = Math.cos(rad) * speed;
@@ -78,6 +77,7 @@ export function tagSphere(el: HTMLElement, options: TagSphereOptions): TagSphere
   let pointerDy = 0;
   let isHovered = false;
   let rafHandle = 0;
+  let lastTs = 0;
   let destroyed = false;
 
   function keepPointerDirectionAsIdle(): void {
@@ -88,24 +88,25 @@ export function tagSphere(el: HTMLElement, options: TagSphereOptions): TagSphere
     idleAY = pointerDx * inv;
   }
 
-  function render(): void {
+  function render(ts: number): void {
     if (destroyed) return;
-    let angleX = idleAX;
-    let angleY = idleAY;
+    const delta = lastTs ? Math.min(ts - lastTs, 33) : TARGET_FRAME_MS;
+    lastTs = ts;
+    const scale = delta / TARGET_FRAME_MS;
+    let angleX = idleAX * scale;
+    let angleY = idleAY * scale;
 
     if (isHovered) {
       const dist = Math.sqrt(pointerDx * pointerDx + pointerDy * pointerDy);
       const factor = Math.min(dist, 1) * speed * HOVER_SPEED_MULTIPLIER;
-      angleX = -pointerDy * factor;
-      angleY = pointerDx * factor;
+      angleX = -pointerDy * factor * scale;
+      angleY = pointerDx * factor * scale;
     }
 
     const cX = Math.cos(angleX);
     const sX = Math.sin(angleX);
     const cY = Math.cos(angleY);
     const sY = Math.sin(angleY);
-    const cx = el.offsetWidth / 2;
-    const cy = el.offsetHeight / 2;
 
     for (let i = 0; i < spans.length; i++) {
       const point = points[i];
@@ -119,11 +120,10 @@ export function tagSphere(el: HTMLElement, options: TagSphereOptions): TagSphere
       point.z = nextZ;
 
       const depth = (nextZ + 1) / 2;
+      const s = MIN_SCALE + SCALE_RANGE * depth;
       const span = spans[i];
-      span.style.left = `${(cx + x * radius - span.offsetWidth / 2).toFixed(1)}px`;
-      span.style.top = `${(cy + y * radius - span.offsetHeight / 2).toFixed(1)}px`;
-      span.style.opacity = (MIN_OPACITY + OPACITY_RANGE * depth).toFixed(3);
-      span.style.fontSize = `${(MIN_SCALE + SCALE_RANGE * depth).toFixed(3)}em`;
+      span.style.transform = `translate(${x * radius - hw[i]}px,${y * radius - hh[i]}px) scale(${s})`;
+      span.style.opacity = String(MIN_OPACITY + OPACITY_RANGE * depth);
       span.style.zIndex = String(Math.round(depth * 100));
     }
 
@@ -167,13 +167,26 @@ export function tagSphere(el: HTMLElement, options: TagSphereOptions): TagSphere
   el.addEventListener('touchmove', onTouchMove, { passive: true });
   el.addEventListener('touchend', onTouchEnd, { passive: true });
 
-  rafHandle = requestAnimationFrame(render);
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) {
+      if (!rafHandle) {
+        lastTs = 0; // reset: avoid position jump after a pause
+        rafHandle = requestAnimationFrame(render);
+      }
+    } else {
+      cancelAnimationFrame(rafHandle);
+      rafHandle = 0;
+    }
+  }, { threshold: 0 });
+
+  observer.observe(el);
 
   return {
     destroy(): void {
       if (destroyed) return;
       destroyed = true;
       cancelAnimationFrame(rafHandle);
+      observer.disconnect();
       el.removeEventListener('mousemove', onMouseMove);
       el.removeEventListener('mouseenter', onMouseEnter);
       el.removeEventListener('mouseleave', onMouseLeave);

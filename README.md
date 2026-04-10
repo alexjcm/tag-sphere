@@ -1,6 +1,6 @@
 # tag-sphere
 
-A lightweight, dependency-free 3D rotating tag sphere for Vanilla JS, React, and Astro. [View demo.](https://alexjcm.github.io/tag-sphere)
+A ultra lightweight, dependency-free 3D rotating tag sphere for Vanilla JS, React, and Astro. [View demo.](https://alexjcm.github.io/tag-sphere)
 
 [![npm version](https://img.shields.io/npm/v/tag-sphere?color=7c6aff&style=flat-square)](https://www.npmjs.com/package/tag-sphere)
 [![License](https://img.shields.io/npm/l/tag-sphere?color=6b6b8a&style=flat-square)](./LICENSE)
@@ -11,7 +11,7 @@ A lightweight, dependency-free 3D rotating tag sphere for Vanilla JS, React, and
 
 ## Features
 
-- Ultra lightweight core target: `< 1 KB` (min+brotli).
+- Ultra lightweight core target.
 - Zero runtime dependencies.
 - Framework-ready entrypoints for Vanilla JS, React (18+), and Astro.
 - SEO-friendly Astro pre-render strategy with client animation.
@@ -95,7 +95,6 @@ import 'tag-sphere/styles.css'; // Optional
 
 - Core library: Node `>=20`.
 - Astro projects: follow your Astro version requirement.
-- Examples workspace in this repository: Node `>=24`.
 
 ## Development
 
@@ -106,8 +105,12 @@ npm run build
 
 ## Examples
 
-Isolated demos live in `examples/`. Extended notes are in [examples/README.md](./examples/README.md).
+The unified React showcase lives in `examples/`. To test library changes with hot-reloading alongside the React demo application, **run the following from the repository root**:
+
+```bash
+npm run examples:dev
+```
 
 ## License
 
-[MIT](./LICENSE) © alexjcm
+MIT
