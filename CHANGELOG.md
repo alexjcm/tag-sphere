@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [1.1.0] - 2026-04-10
 
 ### Added
 - Implemented delta time logic to make rotational speed consistent across different monitor refresh rates (e.g., 60Hz vs 120Hz).
